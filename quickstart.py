@@ -17,6 +17,7 @@ def main():
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
+    fichier = open("agenda.txt","w")
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -54,7 +55,10 @@ def main():
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event['summary'])
-
+            fichier.write(start + " ")
+            fichier.write(event['summary'] + "\n")
+            
+        fichier.close()
     except HttpError as error:
         print('An error occurred: %s' % error)
 
