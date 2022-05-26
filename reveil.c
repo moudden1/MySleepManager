@@ -45,3 +45,4 @@ void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an)
   *mois = local->tm_mon + 1;     
   *an = local->tm_year + 1900;  
 }
+// crontab
