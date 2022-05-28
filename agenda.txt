@@ -1,2 +1,4 @@
-2022-05-28T22:00:00+02:00 dada!train!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!
-2022-05-28T23:30:00+02:00 final:
+2022-05-28T22:00:00+02:00 dada!bicycling!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!
+2022-05-28T23:30:00+02:00 final!transit!Lens, France!
+2022-05-29T08:00:00+02:00 test3!driving!Stade de France, 93200 Saint-Denis, France!
+2022-05-29T10:00:00+02:00 test4!walking!CGI, 31 Bd Carnot, 62000 Arras, France!

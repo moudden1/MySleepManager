@@ -48,6 +48,7 @@ int main(void)
   int date[5]={0};
   char titre[100];
   char destination[300];
+  char mode[10];
     pthread_t th;
     int heureReveil[10][5] = {0};
   f=fopen("agenda.txt","r");
@@ -82,6 +83,14 @@ int main(void)
   	
   	while((c=fgetc(f))!='!')
   	{
+  		mode[cpt]=c;
+  		cpt++;
+  	}
+  	mode[cpt]='\0';
+  	cpt=0;
+  	
+  	while((c=fgetc(f))!='!')
+  	{
   		destination[cpt]=c;
   		cpt++;
   	}
@@ -90,10 +99,13 @@ int main(void)
 
 
 
-  	int duree_trajet = getRoad(50.4289,2.8318,destination);
-  	  	printf("\"%s \n\"",destination);
+  	int duree_trajet = getRoad(50.62925,3.057256, destination, mode);
+
+  	printf("hre2 \n");
+
   	while(duree_trajet>0)
   	{
+  		// a modifier pour prendre en compte heure <0 et jour mois année 
 	  	while(date[4]>=0 && duree_trajet>0)
 	  	{
 	  		date[4]-=1;

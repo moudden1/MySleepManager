@@ -57,9 +57,12 @@ def main():
             print(start, event['summary'])
             print(event)
             fichier.write(start + " ")
-            fichier.write(event['summary'] + ":")
-            fichier.write(event['description'] + ":")
-            fichier.write(event['location'] + ":\n")
+            fichier.write(event['summary'] + "!")
+            if "description" in event:
+            	fichier.write(event['description'] + "!")
+            else:
+            	fichier.write("driving" + "!")
+            fichier.write(event['location'] + "!\n")
             
         fichier.close()
     except HttpError as error:
