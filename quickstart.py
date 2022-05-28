@@ -58,6 +58,7 @@ def main():
             print(event)
             fichier.write(start + " ")
             fichier.write(event['summary'] + ":")
+            fichier.write(event['description'] + ":")
             fichier.write(event['location'] + ":\n")
             
         fichier.close()

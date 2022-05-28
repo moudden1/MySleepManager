@@ -24,7 +24,6 @@ void *reveilThread(void *arg)
   int *heureReveil =(int *)arg;
   getTimeNow(&h, &min, &s, &day, &mois, &an);
   printf("heure reveil %d %d %d %d %d\n",heureReveil[0],heureReveil[1], heureReveil[2],heureReveil[3],heureReveil[4]);
-  
   while(an != heureReveil[0] || mois != heureReveil[1] || day != heureReveil[2]){
   	//printf("heure reveil 1%d %d %d %d %d\n",heureReveil[0],heureReveil[1], heureReveil[2],heureReveil[3],heureReveil[4]);
   	getTimeNow(&h, &min, &s, &day, &mois, &an);
@@ -37,7 +36,7 @@ void *reveilThread(void *arg)
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   	//printf("now %d %d %d %d %d\n",an, mois, day, h, min);
   }
- 
+  printf("heure reveil %d %d %d %d %d\n",heureReveil[0],heureReveil[1], heureReveil[2],heureReveil[3],heureReveil[4]);
   printf("time here !!!! \n");
 }
 
@@ -47,7 +46,7 @@ int main(void)
   char c;
   int date[5]={0};
   char titre[100];
-  char destination[300];
+  char destination[100];
     pthread_t th;
     int heureReveil[10][5] = {0};
   f=fopen("agenda.txt","r");
@@ -72,7 +71,7 @@ int main(void)
   	}
   	cpt=0;
 
-  	while((c=fgetc(f))!='!')
+  	while((c=fgetc(f))!=':')
   	{
   		titre[cpt]=c;
   		cpt++;
@@ -80,7 +79,7 @@ int main(void)
  	titre[cpt]='\0';
   	cpt=0;
   	
-  	while((c=fgetc(f))!='!')
+  	while((c=fgetc(f))!=':')
   	{
   		destination[cpt]=c;
   		cpt++;
@@ -88,13 +87,13 @@ int main(void)
   	destination[cpt]='\0';
   	
 
-
-
-  	int duree_trajet = getRoad(50.4289,2.8318,destination);
-  	  	printf("\"%s \n\"",destination);
+  	
+  	
+  	int duree_trajet = getRoad(50.4289,2.8318,"École+Centrale+de+Lille%2C+Cité+Scientifique%2C+59650+Villeneuve-d%27Ascq%2C+France");
+  	printf("avant %d \n",duree_trajet);
   	while(duree_trajet>0)
   	{
-	  	while(date[4]>=0 && duree_trajet>0)
+	  	while(date[4]>=0 && duree_trajet>=0)
 	  	{
 	  		date[4]-=1;
 	  		duree_trajet-=1;
@@ -105,17 +104,19 @@ int main(void)
 	  		date[4]=59;
 	  	}
   	}
-  
+  	printf("après %d \n",duree_trajet);
+  	printf("%d %d %d %d %d titre \"%s\" destination \"%s\"\n",date[0],date[1],date[2],date[3],date[4],titre, destination); 
   	heureReveil[nbligneslues][0]=date[0];
   	heureReveil[nbligneslues][1]=date[1];
   	heureReveil[nbligneslues][2]=date[2];
   	heureReveil[nbligneslues][3]=date[3];
   	heureReveil[nbligneslues][4]=date[4];
-  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
+  	  pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
   	while((c=fgetc(f))!='\n');
   	nbligneslues++;
   	
   }while(c!=EOF && nbligneslues!=nblignes);
+  printf("wait, ghir iwssl l we9t nsoni \n");
 
   pthread_join(th, NULL);
   return 0;

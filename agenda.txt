@@ -1,2 +1,2 @@
-2022-05-28T17:30:00+02:00 test1:Lille, France:
-2022-05-28T20:00:00+02:00 test2:École Centrale de Lille, Cité Scientifique, 59650 Villeneuve-d'Ascq, France:
+2022-05-28T22:00:00+02:00 dada!train!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!
+2022-05-28T23:30:00+02:00 final:

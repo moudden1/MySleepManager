@@ -32,7 +32,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     return size*nmemb;
 }
 
-int getRoad(double doubleLatitude, double doubleLongitude,char *villeDestination[MAX]){
+int getRoad(double doubleLatitude, double doubleLongitude,char destination[MAX]){
 
     char URL_BASE[MAX];
 
@@ -48,10 +48,7 @@ int getRoad(double doubleLatitude, double doubleLongitude,char *villeDestination
     strcat(URL_BASE,",");
     strcat(URL_BASE,stringLongitude);
     strcat(URL_BASE,"&destination=");
-   strcat(URL_BASE,villeDestination);
-    strcat(URL_BASE,"&avoid=tolls&mode=driving&key=AIzaSyD1zIilw3kPVirr6-Oh_ST05b2zMAcgfIM");
-
- //   printf("url final : %s\n",URL_BASE);
+   
 
     CURL *curl;
     CURLcode res;
@@ -64,7 +61,11 @@ int getRoad(double doubleLatitude, double doubleLongitude,char *villeDestination
 
         struct string s;
         init_string(&s);
+	char *destinationEncoder = curl_easy_escape(curl, destination,strlen(destination));
+	strcat(URL_BASE,destinationEncoder);
+    	strcat(URL_BASE,"&avoid=tolls&mode=driving&key=AIzaSyD1zIilw3kPVirr6-Oh_ST05b2zMAcgfIM");
 
+	printf("url final : %s\n",URL_BASE);
         curl_easy_setopt(curl, CURLOPT_URL, URL_BASE);
 
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
@@ -102,3 +103,4 @@ int getRoad(double doubleLatitude, double doubleLongitude,char *villeDestination
 
 
 // Documentation : https://developers.google.com/maps/documentation/directions/get-directions?hl=fr
+
