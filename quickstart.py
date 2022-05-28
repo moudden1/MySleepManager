@@ -55,8 +55,10 @@ def main():
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event['summary'])
+            print(event)
             fichier.write(start + " ")
-            fichier.write(event['summary'] + "\n")
+            fichier.write(event['summary'] + ":")
+            fichier.write(event['location'] + ":\n")
             
         fichier.close()
     except HttpError as error:

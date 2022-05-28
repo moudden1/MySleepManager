@@ -1,22 +1,10 @@
-#include <stdio.h>
-#include <curl/curl.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
-#define MAX 300
+#include "getDataGoogleMaps2.h"
 
 // How to compile : gcc get.c -lcurl -ljson-c
 
 // Lien du github utilisé 
 // https://github.com/DaveGamble/cJSON#including-cjson 
 
-#include <json-c/json.h>
-
-
-struct string {
-    char *ptr;
-    size_t len;
-};
 
 
 void init_string(struct string *s) {
@@ -44,25 +32,26 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     return size*nmemb;
 }
 
-void getRoad(double doubleLatitude, double doubleLongitude,char villeDestination[MAX]){
+int getRoad(double doubleLatitude, double doubleLongitude,char *villeDestination[MAX]){
 
     char URL_BASE[MAX];
 
     char stringLatitude[50];
     char stringLongitude[50];
 
+
     snprintf(stringLatitude, 50, "%f",doubleLatitude);
     snprintf(stringLongitude, 50, "%f",doubleLongitude);
-
+    
     strcpy (URL_BASE,"https://maps.googleapis.com/maps/api/directions/json?origin=");
     strcat(URL_BASE,stringLatitude);
     strcat(URL_BASE,",");
     strcat(URL_BASE,stringLongitude);
     strcat(URL_BASE,"&destination=");
-    strcat(URL_BASE,villeDestination);
+   strcat(URL_BASE,villeDestination);
     strcat(URL_BASE,"&avoid=tolls&mode=driving&key=AIzaSyD1zIilw3kPVirr6-Oh_ST05b2zMAcgfIM");
 
-    printf("url final : %s\n",URL_BASE);
+ //   printf("url final : %s\n",URL_BASE);
 
     CURL *curl;
     CURLcode res;
@@ -84,49 +73,32 @@ void getRoad(double doubleLatitude, double doubleLongitude,char villeDestination
         res = curl_easy_perform(curl);
 
         struct json_object *obj = json_tokener_parse(s.ptr);
-        if (!obj) { fputs("json_tokener_parse failed\n", stderr); return; }
-
+        if (!obj) { fputs("json_tokener_parse failed\n", stderr); return 0; }
         struct json_object *routes = json_object_object_get(obj, "routes");
-        if (!routes) { fputs("no routes\n", stderr); return; }
+        if (!routes) { fputs("no routes\n", stderr); return 0; }
 
-        struct json_object *distance ;
-        struct json_object *steps;
+        struct json_object *route = json_object_array_get_idx(routes, 0);
+        struct json_object *legs = json_object_object_get(route, "legs");
+        size_t legslen = json_object_array_length(legs);
 
-        size_t routeslen = json_object_array_length(routes);
-        printf("There are %zd routes.\n", routeslen);
-        for (size_t idx = 0; idx < routeslen; ++idx){
-            printf("route %zd:\n", idx);
-            struct json_object *route = json_object_array_get_idx(routes, idx);
-
-            struct json_object *legs = json_object_object_get(route, "legs");
-            size_t legslen = json_object_array_length(legs);
-
-            for (size_t idy = 0; idy < legslen; ++idy){
-                struct json_object *distance = json_object_array_get_idx(legs, idx);
+        struct json_object *distance = json_object_array_get_idx(legs, 0);
                 printf("Object Distance is %s\n", json_object_get_string(json_object_object_get(distance, "distance")));
 
-                struct json_object *duration = json_object_array_get_idx(legs, idx);
-                printf("Object duration is %s\n", json_object_get_string(json_object_object_get(duration, "duration")));
+        struct json_object *duration = json_object_array_get_idx(legs, 0);
+ printf("Object duration 1 is %s\n", json_object_get_string(json_object_object_get(duration, "duration")));
+                printf("Object duration is %d\n", json_object_get_int(json_object_object_get(json_object_object_get(duration, "duration"), "value"))/60);
 
-                struct json_object *end_location = json_object_array_get_idx(legs, idx);
-                printf("Object end_location is %s\n", json_object_get_string(json_object_object_get(end_location, "end_location")));
-            }
-
-        }
-
+        struct json_object *end_location = json_object_array_get_idx(legs, 0);
+              //  printf("Object end_location is %s\n", json_object_get_string(json_object_object_get(end_location, "end_location")));
+         
+	return json_object_get_int(json_object_object_get(json_object_object_get(duration, "duration"), "value"))/60;
         if(res != CURLE_OK)
             fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
         curl_easy_cleanup(curl);
     }
     curl_global_cleanup();
-}
-
-
-int main(){
-
-    getRoad(50.6265,3.0528,"Arras");
     return 0;
-
 }
+
 
 // Documentation : https://developers.google.com/maps/documentation/directions/get-directions?hl=fr

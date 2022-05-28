@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
+#include <string.h>
 void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
 void delay(int number_of_seconds)
 {
@@ -44,6 +45,8 @@ int main(void)
   FILE *f;
   char c;
   int date[5]={0};
+  char titre[100];
+  char destination[100];
     pthread_t th;
     int heureReveil[10][5] = {0};
   f=fopen("agenda.txt","r");
@@ -59,14 +62,55 @@ int main(void)
     	
   do
   {	
- 	printf("%d \n",nblignes);
-  	fscanf(f,"%d-%d-%dT%d:%d",&date[0],&date[1],&date[2],&date[3],&date[4]);
+  	fscanf(f,"%d-%d-%dT%d:%d ",&date[0],&date[1],&date[2],&date[3],&date[4]);
+  	int cpt=0;
+  	while(cpt<10)
+  	{
+  		c=fgetc(f);
+  		cpt++;
+  	}
+  	cpt=0;
+
+  	while((c=fgetc(f))!=':')
+  	{
+  		titre[cpt]=c;
+  		cpt++;
+  	}
+ 	titre[cpt]='\0';
+  	cpt=0;
+  	
+  	while((c=fgetc(f))!=':')
+  	{
+  		destination[cpt]=c;
+  		cpt++;
+  	}
+  	destination[cpt]='\0';
+  	
+
+  	
+  	
+  	int duree_trajet = getRoad(50.4289,2.8318,"Lille");
+  	printf("avant %d \n",duree_trajet);
+  	while(duree_trajet>0)
+  	{
+	  	while(date[4]>=0 && duree_trajet>=0)
+	  	{
+	  		date[4]-=1;
+	  		duree_trajet-=1;
+	  	}
+	  	if(duree_trajet>0)
+	  	{
+	  		date[3]-=1;
+	  		date[4]=59;
+	  	}
+  	}
+  	printf("après %d \n",duree_trajet);
+  	printf("%d %d %d %d %d titre \"%s\" destination \"%s\"\n",date[0],date[1],date[2],date[3],date[4],titre, destination); 
   	heureReveil[nbligneslues][0]=date[0];
   	heureReveil[nbligneslues][1]=date[1];
   	heureReveil[nbligneslues][2]=date[2];
   	heureReveil[nbligneslues][3]=date[3];
   	heureReveil[nbligneslues][4]=date[4];
-  	printf("%d %d %d %d %d\n",date[0],date[1],date[2],date[3],date[4]); 
   	  pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
   	while((c=fgetc(f))!='\n');
   	nbligneslues++;
@@ -74,10 +118,6 @@ int main(void)
   }while(c!=EOF && nbligneslues!=nblignes);
   printf("wait, ghir iwssl l we9t nsoni \n");
 
-  //int heureReveil[5] = {2022, 05, 24, 15, 9};
-  //int heureReveil2[5] = {2022, 05, 24, 15, 10};
-  //pthread_create(&th, NULL, reveilThread, (void *)heureReveil);
- // pthread_create(&th, NULL, reveilThread, (void *)heureReveil2);
   pthread_join(th, NULL);
   return 0;
 }

@@ -1,2 +1,2 @@
-2022-05-26T21:31:00+02:00 affaa
-2022-05-26T21:32:00+02:00 teda
+2022-05-28T17:30:00+02:00 test1:Lille, France:
+2022-05-28T20:00:00+02:00 test2:École Centrale de Lille, Cité Scientifique, 59650 Villeneuve-d'Ascq, France:
