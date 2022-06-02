@@ -1,1 +1,4 @@
-2022-06-02T18:00:00+02:00 ada!driving!Lens, France!
+2022-06-02T23:36:00+02:00 afafa!driving!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!
+2022-06-02T23:41:00+02:00 lens2!driving!Lens, France!
+2022-06-02T23:47:00+02:00 sbah!driving!Arras, France!
+2022-06-03T13:00:00+02:00 faa!driving!Paris, France!
