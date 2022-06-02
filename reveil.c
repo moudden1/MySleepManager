@@ -50,18 +50,20 @@ int main(void)
   char destination[300];
   char mode[10];
     pthread_t th;
-    int heureReveil[10][5] = {0};
+    int heureReveil[5][5] = {0};
+  char phraseReveil[5][300];
   f=fopen("agenda.txt","r");
   	int nblignes=0;
   	int nbligneslues=0;
+  	int k=0;
   	while((c=fgetc(f))!=EOF){
         	if(c=='\n')
         	{
+        		
         		nblignes++;	
         	}
     	}
     	rewind(f); // renvoyer à la pos 0	
-    	
   do
   {	
   	fscanf(f,"%d-%d-%dT%d:%d ",&date[0],&date[1],&date[2],&date[3],&date[4]);
@@ -98,8 +100,7 @@ int main(void)
   	
 
 
-
-  	int duree_trajet = getRoad(50.62925,3.057256, destination, mode);
+  	int duree_trajet = getRoad(50.62925,3.057256,destination, mode);
 
   	printf("hre2 \n");
 
@@ -126,9 +127,9 @@ int main(void)
   	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
   	while((c=fgetc(f))!='\n');
   	nbligneslues++;
-  	
+  
   }while(c!=EOF && nbligneslues!=nblignes);
-
+	  	system("python3 quickstart.py");
   pthread_join(th, NULL);
   return 0;
 }
