@@ -54,6 +54,7 @@ def main():
         # Prints the start and name of the next 10 events
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
+            reminders = event['reminders']
             print(start, event['summary'])
             print(event)
             fichier.write(start + " ")
@@ -62,7 +63,11 @@ def main():
             	fichier.write(event['description'] + "!")
             else:
             	fichier.write("driving" + "!")
-            fichier.write(event['location'] + "!\n")
+            fichier.write(event['location'] + "!")
+            if "overrides" in reminders:
+            	fichier.write(str(reminders['overrides'][0]['minutes'])+'!\n')
+            else:
+            	fichier.write("30!\n")
             
         fichier.close()
     except HttpError as error:

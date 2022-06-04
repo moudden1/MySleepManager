@@ -6,6 +6,7 @@ struct heureReveil
 	int jour;
 	int heure;
 	int min;
+	int notif;
 	char destination[300];
 	char mode[10];
 };

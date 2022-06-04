@@ -22,16 +22,16 @@ void *reveilThread(void *arg)
   }
   while(h != heureReveil->heure || min != heureReveil->min)
   {
-  	if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
-  	{
+  	//if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
+  	//{
   		//int duree_trajet_thread = getRoad(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
   		/*if(duree_trajet_thread != )
   		{
   			
   		}*/
-  		printf("reste moins de 2 heures pour le reveil \n");
+  		//printf("reste moins de 2 heures pour le reveil \n");
   		//de
-  	}
+  	//}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
   printf("time here !!!! \n");
@@ -41,7 +41,7 @@ int main(void)
 {
   FILE *f,*f2;
   char c,c2;
-  int date[5]={0};
+  int date[6]={0};
   char titre[100];
  
     pthread_t th;
@@ -151,8 +151,12 @@ int main(void)
   do
   {	
 	heureReveil[nbligneslues] = (heureReveil_t *)malloc(sizeof(heureReveil_t));
-  	fscanf(f2,"%d-%d-%dT%d:%d ",&date[0],&date[1],&date[2],&date[3],&date[4]);
+  	fscanf(f2,"%d-%d-%dT%d:%d",&date[0],&date[1],&date[2],&date[3],&date[4]);
+
   	int cpt=0;
+
+  	printf("heure initial %d %d %d %d %d\n",date[0],date[1],date[2],date[3],date[4]);
+
   	while(cpt<10)
   	{
   		c=fgetc(f2);
@@ -180,7 +184,15 @@ int main(void)
   		cpt++;
   	}
   	heureReveil[nbligneslues]->destination[cpt]='\0';
-  	
+  	cpt=0;
+  	char notifreveil[3]; 
+  	while((c=fgetc(f2))!='!')
+  	{
+  		notifreveil[cpt]=c;
+  		cpt++;
+  	}
+  	notifreveil[cpt]='\0';
+	int notifreveilenint=atoi(notifreveil);
 
   	int duree_trajet = getRoad(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
 
@@ -200,6 +212,24 @@ int main(void)
 	  		date[4]=59;
 	  	}
   	}
+  	printf("%d \n",notifreveilenint);
+  	while(notifreveilenint>0)
+  	{
+  		// a modifier pour prendre en compte heure <0 et jour mois année 
+	  	while(date[4]>=0 && notifreveilenint>0)
+	  	{
+	  		date[4]-=1;
+	  		notifreveilenint-=1;
+	  	}
+	  	if(notifreveilenint>0)
+	  	{
+	  		date[3]-=1;
+	  		date[4]=59;
+	  	}
+  	}
+  	
+  	
+  	
   
 
   	heureReveil[nbligneslues]->annee = date[0];
