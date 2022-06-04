@@ -51,7 +51,7 @@ int main(void)
   char mode[10];
     pthread_t th;
     int heureReveil[5][5] = {0};
-  char phraseReveil[20][300] = {""};
+  char phraseReveil[100][300] = {""};
    char phraseReveilTemp[300] = {""};
   int firstTime=1;
     	int nblignes=0;
@@ -91,7 +91,6 @@ int main(void)
 				printf("phraseReveilTemp %s \n",phraseReveilTemp);
 				int m=0;
 				int quitter=0;
-				for(int m=0;m<nblignes;m++)
 				while(m<nblignes && quitter==0)
 				{
 					if(strcmp(phraseReveil[m],phraseReveilTemp)==0)
@@ -106,10 +105,11 @@ int main(void)
 				}
 				if(quitter==0)
 				{
-					fputs(phraseReveilTemp, f2);
+						printf("je vais l'ajouter %s \n",phraseReveilTemp);
+						fputs(phraseReveilTemp, f2);
 						fputc('\n',f2);
-						nblignes++;
 						strcpy(phraseReveil[nblignes],phraseReveilTemp);
+						nblignes++;
 						memset(phraseReveilTemp,'\0',300);
 				}
 				k=0;
@@ -122,7 +122,7 @@ int main(void)
         	}
     	}
     	k=0;
-     nblignes2=0;
+     	nblignes2=0;
     	rewind(f2);
     	while((c2=fgetc(f2))!=EOF){
     		if(c2=='\n')
@@ -133,6 +133,25 @@ int main(void)
     	rewind(f2);
     	rewind(f); // renvoyer à la pos 0	
     	printf("nblignes %d \n",nblignes2);
+    	char chaine[300] = ""; 
+    	printf("f * ************** \n");
+    	for(int l=0; l<nblignes; l++)
+    	{
+    		printf("%s \n",phraseReveil[l]);
+    	}
+    	printf("f * ************** \n");
+    	printf("f2 * ************** \n");
+    	int p=0;
+    	while(f2 != NULL && nblignes2>p)
+    	{
+    		fgets(chaine, 300, f2);
+    		printf("%s",chaine);
+    		delay(3000);
+    		p++;
+    	}
+    	printf("f2 * ************** \n");
+    	rewind(f2);
+    	rewind(f); // renvoyer à la pos 0
     if(nblignes2 > 0){
   do
   {	
@@ -200,7 +219,7 @@ int main(void)
   
   }while(c!=EOF && nbligneslues!=nblignes2);
   }
-  	  	delay(60000);
+  	  	delay(30000);
 	  	system("python3 quickstart.py");
 	  	firstTime=0;
 
