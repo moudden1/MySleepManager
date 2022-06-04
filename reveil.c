@@ -4,40 +4,36 @@
 #include <pthread.h>
 #include <string.h>
 #include <wiringPi.h>
+#include "reveil.h"
 void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
-void delay2(int number_of_seconds)
-{
-    // Converting time into milli_seconds
-    int milli_seconds = 1000 * number_of_seconds;
-  
-    // Storing start time
-    clock_t start_time = clock();
-  
-    // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds)
-        ;
-}
 
 
 void *reveilThread(void *arg)
 {
   int h, min, s, day, mois, an;
-  int *heureReveil =(int *)arg;
+  int duree_trajet_thread;
+  heureReveil_t *heureReveil =(heureReveil_t *)arg;
   getTimeNow(&h, &min, &s, &day, &mois, &an);
-  printf("heure reveil %d %d %d %d %d\n",heureReveil[0],heureReveil[1], heureReveil[2],heureReveil[3],heureReveil[4]);
-  
-  while(an != heureReveil[0] || mois != heureReveil[1] || day != heureReveil[2]){
-  	//printf("heure reveil 1%d %d %d %d %d\n",heureReveil[0],heureReveil[1], heureReveil[2],heureReveil[3],heureReveil[4]);
+  printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
+
+
+  while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
   	getTimeNow(&h, &min, &s, &day, &mois, &an);
-  	//printf("now %d %d %d %d %d\n",an, mois, day, h, min);
   }
-  while(h != heureReveil[3] || min != heureReveil[4])
+  while(h != heureReveil->heure || min != heureReveil->min)
   {
-  	//printf("heure reveil %d %d %d %d %d\n",heureReveil[0],heureReveil[1], heureReveil[2],heureReveil[3],heureReveil[4]);
+  	if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
+  	{
+  		//int duree_trajet_thread = getRoad(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+  		/*if(duree_trajet_thread != )
+  		{
+  			
+  		}*/
+  		printf("reste moins de 2 heures pour le reveil \n");
+  		//de
+  	}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
-  	//printf("now %d %d %d %d %d\n",an, mois, day, h, min);
   }
- 
   printf("time here !!!! \n");
 }
 
@@ -47,10 +43,10 @@ int main(void)
   char c,c2;
   int date[5]={0};
   char titre[100];
-  char destination[300];
-  char mode[10];
+ 
     pthread_t th;
-    int heureReveil[5][5] = {0};
+  //  int heureReveil[5][5] = {0};
+    heureReveil_t *heureReveil[5];
   char phraseReveil[100][300] = {""};
    char phraseReveilTemp[300] = {""};
   int firstTime=1;
@@ -146,7 +142,6 @@ int main(void)
     	{
     		fgets(chaine, 300, f2);
     		printf("%s",chaine);
-    		delay(3000);
     		p++;
     	}
     	printf("f2 * ************** \n");
@@ -155,7 +150,7 @@ int main(void)
     if(nblignes2 > 0){
   do
   {	
-
+	heureReveil[nbligneslues] = (heureReveil_t *)malloc(sizeof(heureReveil_t));
   	fscanf(f2,"%d-%d-%dT%d:%d ",&date[0],&date[1],&date[2],&date[3],&date[4]);
   	int cpt=0;
   	while(cpt<10)
@@ -174,21 +169,20 @@ int main(void)
   	cpt=0;
   	while((c=fgetc(f2))!='!')
   	{
-  		mode[cpt]=c;
+  		heureReveil[nbligneslues]->mode[cpt]=c;
   		cpt++;
   	}
-  	mode[cpt]='\0';
+  	heureReveil[nbligneslues]->mode[cpt]='\0';
   	cpt=0;
-  	
   	while((c=fgetc(f2))!='!')
   	{
-  		destination[cpt]=c;
+  		heureReveil[nbligneslues]->destination[cpt]=c;
   		cpt++;
   	}
-  	destination[cpt]='\0';
+  	heureReveil[nbligneslues]->destination[cpt]='\0';
   	
 
-  	int duree_trajet = getRoad(50.62925,3.057256,destination, mode);
+  	int duree_trajet = getRoad(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
 
 
 
@@ -207,11 +201,13 @@ int main(void)
 	  	}
   	}
   
-  	heureReveil[nbligneslues][0]=date[0];
-  	heureReveil[nbligneslues][1]=date[1];
-  	heureReveil[nbligneslues][2]=date[2];
-  	heureReveil[nbligneslues][3]=date[3];
-  	heureReveil[nbligneslues][4]=date[4];
+
+  	heureReveil[nbligneslues]->annee = date[0];
+  	heureReveil[nbligneslues]->mois = date[1];
+  	heureReveil[nbligneslues]->jour = date[2];
+  	heureReveil[nbligneslues]->heure = date[3];
+  	heureReveil[nbligneslues]->min = date[4];
+  	
   	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
   	delay(2000);
   	while((c=fgetc(f2))!='\n');

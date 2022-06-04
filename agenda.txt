@@ -1,5 +1,4 @@
-2022-06-04T14:30:00+02:00 arraseve!driving!Arras, France!
-2022-06-04T16:30:00+02:00 jaja!driving!Douai, France!
 2022-06-04T18:00:00+02:00 pariseve!driving!Paris, France!
+2022-06-04T18:37:00+02:00 jaja!driving!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!
 2022-06-04T21:00:00+02:00 lenseve!driving!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!
 2022-06-04T23:30:00+02:00 betheve!driving!Béthune, France!
