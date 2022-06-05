@@ -52,11 +52,15 @@ int main(void)
    char phraseReveilTemp[300] = {""};
   int firstTime=1;
     	int nblignes=0;
+delay(30000);
+system("python3 quickstart.py");
 	printf("hre \n");
    while(1)
    {
+printf("hre \n");
    	f=fopen("agenda.txt","r");
 	f2=fopen("events.txt","w+");
+printf("hre \n");
 	int nblignes2=0;
     	while((c2=fgetc(f2))!=255){
     		if(c2=='\n')
@@ -64,13 +68,19 @@ int main(void)
     			nblignes2++;
     		}	
     	}
+printf("hre \n");
     	rewind(f2);
+printf("hre \n");
     	printf("nblignes22 %d \n",nblignes2);
+printf("hre \n");
   	int nbligneslues=0;
   	int k=0;
+printf("hre \n");
   	while((c=fgetc(f))!=255){
+printf("hre \n");
   		if(firstTime==1)
   		{
+printf("hre \n");
 			if(c=='\n')
 			{
 				nblignes++;	
