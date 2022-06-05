@@ -9,4 +9,5 @@ struct heureReveil
 	int notif;
 	char destination[300];
 	char mode[10];
+	char titre[100];
 };

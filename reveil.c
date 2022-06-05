@@ -6,7 +6,7 @@
 #include <wiringPi.h>
 #include "reveil.h"
 void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
-
+void declencherBuzzer();
 
 void *reveilThread(void *arg)
 {
@@ -15,7 +15,7 @@ void *reveilThread(void *arg)
   heureReveil_t *heureReveil =(heureReveil_t *)arg;
   getTimeNow(&h, &min, &s, &day, &mois, &an);
   printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
-
+	printf("titre de l'event %s \n",heureReveil->titre);
 
   while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
   	getTimeNow(&h, &min, &s, &day, &mois, &an);
@@ -24,7 +24,7 @@ void *reveilThread(void *arg)
   {
   	//if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
   	//{
-  		//int duree_trajet_thread = getRoad(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+  		//int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
   		/*if(duree_trajet_thread != )
   		{
   			
@@ -34,6 +34,7 @@ void *reveilThread(void *arg)
   	//}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
+  declencherBuzzer();
   printf("time here !!!! \n");
 }
 
@@ -42,7 +43,7 @@ int main(void)
   FILE *f,*f2;
   char c,c2;
   int date[6]={0};
-  char titre[100];
+
  
     pthread_t th;
   //  int heureReveil[5][5] = {0};
@@ -51,12 +52,13 @@ int main(void)
    char phraseReveilTemp[300] = {""};
   int firstTime=1;
     	int nblignes=0;
+	printf("hre \n");
    while(1)
    {
    	f=fopen("agenda.txt","r");
 	f2=fopen("events.txt","w+");
 	int nblignes2=0;
-    	while((c2=fgetc(f2))!=EOF){
+    	while((c2=fgetc(f2))!=255){
     		if(c2=='\n')
     		{
     			nblignes2++;
@@ -66,7 +68,7 @@ int main(void)
     	printf("nblignes22 %d \n",nblignes2);
   	int nbligneslues=0;
   	int k=0;
-  	while((c=fgetc(f))!=EOF){
+  	while((c=fgetc(f))!=255){
   		if(firstTime==1)
   		{
 			if(c=='\n')
@@ -120,7 +122,7 @@ int main(void)
     	k=0;
      	nblignes2=0;
     	rewind(f2);
-    	while((c2=fgetc(f2))!=EOF){
+    	while((c2=fgetc(f2))!=255){
     		if(c2=='\n')
     		{
     			nblignes2++;
@@ -166,10 +168,10 @@ int main(void)
   	while((c=fgetc(f2))!='!')
   	{
   		
-  		titre[cpt]=c;
+  		heureReveil[nbligneslues]->titre[cpt]=c;
   		cpt++;
   	}
- 	titre[cpt]='\0';
+ 	heureReveil[nbligneslues]->titre[cpt]='\0';
   	cpt=0;
   	while((c=fgetc(f2))!='!')
   	{
@@ -194,7 +196,7 @@ int main(void)
   	notifreveil[cpt]='\0';
 	int notifreveilenint=atoi(notifreveil);
 
-  	int duree_trajet = getRoad(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+  	int duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
 
 
 
@@ -212,7 +214,7 @@ int main(void)
 	  		date[4]=59;
 	  	}
   	}
-  	printf("%d \n",notifreveilenint);
+  	
   	while(notifreveilenint>0)
   	{
   		// a modifier pour prendre en compte heure <0 et jour mois année 
@@ -243,7 +245,7 @@ int main(void)
   	while((c=fgetc(f2))!='\n');
   	nbligneslues++;
   
-  }while(c!=EOF && nbligneslues!=nblignes2);
+  }while(c!=255 && nbligneslues!=nblignes2);
   }
   	  	delay(30000);
 	  	system("python3 quickstart.py");
@@ -269,5 +271,18 @@ void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an)
   *day = local->tm_mday;          
   *mois = local->tm_mon + 1;     
   *an = local->tm_year + 1900;  
+}
+
+void declencherBuzzer()
+{
+	wiringPiSetup () ;
+  pinMode (27, OUTPUT) ;
+ int i=0;
+  while (i<1000)
+  {
+    digitalWrite (27, HIGH) ; delay (1) ;
+    digitalWrite (27, LOW) ; delay (2) ;
+    i++;
+  }
 }
 // crontab

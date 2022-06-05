@@ -32,7 +32,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     return size*nmemb;
 }
 
-int getRoad(double doubleLatitude, double doubleLongitude,char destination[MAX], char mode[10]){
+int getDuration(double doubleLatitude, double doubleLongitude,char destination[MAX], char mode[10]){
 
     char URL_BASE[MAX];
 
