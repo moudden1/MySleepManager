@@ -76,9 +76,9 @@ int getDuration(double doubleLatitude, double doubleLongitude,char destination[M
 
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
-	
+		
         res = curl_easy_perform(curl);
-
+	
         struct json_object *obj = json_tokener_parse(s.ptr);
         if (!obj) { fputs("json_tokener_parse failed\n", stderr); return 0; }
         struct json_object *routes = json_object_object_get(obj, "routes");

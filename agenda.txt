@@ -1,3 +1,1 @@
-2022-06-05T14:16:00+02:00 eventLens!driving!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!30!
-2022-06-05T15:00:00+02:00 arrasevent!driving!CGI, 31 Bd Carnot, 62000 Arras, France!60!
-2022-06-05T15:02:00+02:00 eventaras2!driving!Arras, France!30!
+2022-06-05T15:05:00+02:00 eventlens!driving!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!30!
