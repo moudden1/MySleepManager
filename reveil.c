@@ -24,7 +24,7 @@ void *reveilThread(void *arg)
   {
   	//if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
   	//{
-  		//int duree_trajet_thread = getRoad(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+  		//int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
   		/*if(duree_trajet_thread != )
   		{
   			
@@ -194,7 +194,7 @@ int main(void)
   	notifreveil[cpt]='\0';
 	int notifreveilenint=atoi(notifreveil);
 
-  	int duree_trajet = getRoad(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+  	int duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
 
 
 

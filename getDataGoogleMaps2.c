@@ -32,7 +32,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     return size*nmemb;
 }
 
-int getRoad(double doubleLatitude, double doubleLongitude,char destination[MAX], char mode[10]){
+int getDuration(double doubleLatitude, double doubleLongitude,char destination[MAX], char mode[10]){
 
     char URL_BASE[MAX];
 
@@ -76,9 +76,9 @@ int getRoad(double doubleLatitude, double doubleLongitude,char destination[MAX],
 
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
-	
+		
         res = curl_easy_perform(curl);
-
+	printf("%s \n",s.ptr);
         struct json_object *obj = json_tokener_parse(s.ptr);
         if (!obj) { fputs("json_tokener_parse failed\n", stderr); return 0; }
         struct json_object *routes = json_object_object_get(obj, "routes");
