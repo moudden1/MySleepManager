@@ -25,6 +25,7 @@ void *reveilThread(void *arg)
   			int diff = duree_trajet_thread - heureReveil->duree_trajet;
 			heureReveil->duree_trajet = duree_trajet_thread;
 			printf("difference entre les deux %d avant moins de %d min  \n",diff,tempsrestant);
+			delay(3000);
 			if(diff > 0)
 			{
 				while(diff>0)
@@ -62,6 +63,7 @@ void *reveilThread(void *arg)
   		}
   		printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
 		tempsrestant-=15;
+printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
 		delay(3000);
   	}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
@@ -264,18 +266,18 @@ int main(void)
 			int notifreveilenint=atoi(notifreveil);
 
 		  	heureReveil[nbligneslues]->duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+			int temp = heureReveil[nbligneslues]->duree_trajet;
 
 
-
-		  	while(heureReveil[nbligneslues]->duree_trajet>0)
+		  	while(temp>0)
 		  	{
 		  		// a modifier pour prendre en compte heure <0 et jour mois année 
-			  	while(date[4]>=0 && heureReveil[nbligneslues]->duree_trajet>0)
+			  	while(date[4]>=0 && temp>0)
 			  	{
 			  		date[4]-=1;
-			  		heureReveil[nbligneslues]->duree_trajet-=1;
+			  		temp-=1;
 			  	}
-			  	if(heureReveil[nbligneslues]->duree_trajet>0)
+			  	if(temp>0)
 			  	{
 			  		date[3]-=1;
 			  		date[4]=59;
