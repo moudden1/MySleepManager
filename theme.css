@@ -1,0 +1,17 @@
+GtkWidget {
+    font: Comic Sans 12;
+    background-color: green;
+    border-width: 3px;
+    border-color: blue;
+}
+
+.button {
+  color: green;
+}
+window label {
+  background-color: green;
+}
+label{
+color: white;
+font-size: 75px;
+}
