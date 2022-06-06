@@ -26,9 +26,43 @@ void *reveilThread(void *arg)
   	//}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
-  declencherBuzzer();
+  //declencherBuzzer();
+  start_alarm_app(NULL, NULL);
   printf("time here !!!! \n");
 }
+
+void *reveilThread2(void *arg)
+{
+  int h, min, s, day, mois, an;
+  int duree_trajet_thread;
+  heureReveil_t *heureReveil =(heureReveil_t *)arg;
+  getTimeNow(&h, &min, &s, &day, &mois, &an);
+  printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
+  printf("titre de l'event %s \n",heureReveil->titre);
+
+  while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
+  	getTimeNow(&h, &min, &s, &day, &mois, &an);
+  }
+  while(h != heureReveil->heure || min != heureReveil->min)
+  {
+  	//if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
+  	//{
+  		//int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+  		/*if(duree_trajet_thread != )
+  		{
+  			
+  		}*/
+  		//printf("reste moins de 2 heures pour le reveil \n");
+  		//de
+  	//}
+  	getTimeNow(&h, &min, &s, &day, &mois, &an);	
+  }
+  declencherBuzzer();
+  //start_alarm_app(NULL, NULL);
+  printf("time here 2!!!! \n");
+}
+
+
 
 int main(void)
 {
@@ -236,6 +270,7 @@ int main(void)
 		  	heureReveil[nbligneslues]->min = date[4];
 		  	
 		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
+pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	delay(2000);
 		  	while((c=fgetc(f2))!='\n');
 		  	nbligneslues++;
@@ -273,7 +308,7 @@ void declencherBuzzer()
 	wiringPiSetup () ;
   pinMode (27, OUTPUT) ;
  int i=0;
-  while (i<1000)
+  while (1)
   {
     digitalWrite (27, HIGH) ; delay (1) ;
     digitalWrite (27, LOW) ; delay (2) ;

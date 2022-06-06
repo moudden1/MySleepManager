@@ -2,7 +2,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <time.h> 
-
+#include <wiringPi.h>
 
 
 int start_app(int    argc,char **argv);

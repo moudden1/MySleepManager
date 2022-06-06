@@ -3,10 +3,14 @@
 
 
 int main (int    argc,char **argv){
-return start_app(argc,argv);
-
+delay(10000); // à modiier
+system("echo test > test");
+start_app(argc,argv);
+  while(1);
+return 0;
 
 }
+
 
 int start_app(int    argc,char **argv){
   GtkApplication *app;
