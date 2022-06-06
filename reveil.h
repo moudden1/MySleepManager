@@ -21,4 +21,5 @@ struct heureReveil
 	char destination[300];
 	char mode[10];
 	char titre[100];
+	int duree_trajet;
 };

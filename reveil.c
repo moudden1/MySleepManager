@@ -6,6 +6,7 @@ void *reveilThread(void *arg)
   int duree_trajet_thread;
   heureReveil_t *heureReveil =(heureReveil_t *)arg;
   getTimeNow(&h, &min, &s, &day, &mois, &an);
+  int tempsrestant = 120;
   printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
   printf("titre de l'event %s \n",heureReveil->titre);
 
@@ -14,16 +15,55 @@ void *reveilThread(void *arg)
   }
   while(h != heureReveil->heure || min != heureReveil->min)
   {
-  	//if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
-  	//{
-  		//int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
-  		/*if(duree_trajet_thread != )
+	//printf("1 %d \n",heureReveil->heure * 60 + heureReveil->min);
+	//printf("%d \n",h*60+min-tempsrestant);
+  	if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min-tempsrestant))
+  	{
+  		int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+  		if(duree_trajet_thread != heureReveil->duree_trajet)
   		{
-  			
-  		}*/
-  		//printf("reste moins de 2 heures pour le reveil \n");
-  		//de
-  	//}
+  			int diff = duree_trajet_thread - heureReveil->duree_trajet;
+			heureReveil->duree_trajet = duree_trajet_thread;
+			printf("difference entre les deux %d avant moins de %d min  \n",diff,tempsrestant);
+			if(diff > 0)
+			{
+				while(diff>0)
+		  		{
+			  		// a modifier pour prendre en compte heure <0 et jour mois année 
+				  	while(heureReveil->min>=0 && diff>0)
+				  	{
+				  		heureReveil->min-=1;
+				  		diff-=1;
+				  	}
+				  	if(diff>0)
+				  	{
+				  		heureReveil->heure-=1;
+				  		heureReveil->min=59;
+				  	}
+		  		}
+			}
+			else
+			{
+				while(diff<0)
+		  		{
+			  		// a modifier pour prendre en compte heure <0 et jour mois année 
+				  	while(heureReveil->min>=0 && diff<0)
+				  	{
+				  		heureReveil->min+=1;
+				  		diff+=1;
+				  	}
+				  	if(diff<0)
+				  	{
+				  		heureReveil->heure+=1;
+				  		heureReveil->min=59;
+				  	}
+		  		}
+			}
+  		}
+  		printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
+		tempsrestant-=15;
+		delay(3000);
+  	}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
   //declencherBuzzer();
@@ -58,7 +98,6 @@ void *reveilThread2(void *arg)
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
   declencherBuzzer();
-  //start_alarm_app(NULL, NULL);
   printf("time here 2!!!! \n");
 }
 
@@ -79,7 +118,6 @@ int main(void)
   int nbligneslues=0,k=0,m=0,quitter=0;
 
   /*lancement du programme python pour récuperer les events*/
-  delay(30000); // a modifier
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
   system("python3 quickstart.py");
 
@@ -225,19 +263,19 @@ int main(void)
 		  	notifreveil[cpt]='\0';
 			int notifreveilenint=atoi(notifreveil);
 
-		  	int duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+		  	heureReveil[nbligneslues]->duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
 
 
 
-		  	while(duree_trajet>0)
+		  	while(heureReveil[nbligneslues]->duree_trajet>0)
 		  	{
 		  		// a modifier pour prendre en compte heure <0 et jour mois année 
-			  	while(date[4]>=0 && duree_trajet>0)
+			  	while(date[4]>=0 && heureReveil[nbligneslues]->duree_trajet>0)
 			  	{
 			  		date[4]-=1;
-			  		duree_trajet-=1;
+			  		heureReveil[nbligneslues]->duree_trajet-=1;
 			  	}
-			  	if(duree_trajet>0)
+			  	if(heureReveil[nbligneslues]->duree_trajet>0)
 			  	{
 			  		date[3]-=1;
 			  		date[4]=59;
