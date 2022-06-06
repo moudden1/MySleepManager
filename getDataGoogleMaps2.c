@@ -1,11 +1,6 @@
 #include "getDataGoogleMaps2.h"
 
-// How to compile : gcc get.c -lcurl -ljson-c
-
-// Lien du github utilisé 
-// https://github.com/DaveGamble/cJSON#including-cjson 
-
-
+// Documentation : https://developers.google.com/maps/documentation/directions/get-directions?hl=fr
 
 void init_string(struct string *s) {
     s->len = 0;
@@ -88,15 +83,7 @@ int getDuration(double doubleLatitude, double doubleLongitude,char destination[M
         struct json_object *legs = json_object_object_get(route, "legs");
         size_t legslen = json_object_array_length(legs);
 
-        struct json_object *distance = json_object_array_get_idx(legs, 0);
-                printf("Object Distance is %s\n", json_object_get_string(json_object_object_get(distance, "distance")));
-
         struct json_object *duration = json_object_array_get_idx(legs, 0);
- printf("Object duration 1 is %s\n", json_object_get_string(json_object_object_get(duration, "duration")));
-                printf("Object duration is %d\n", json_object_get_int(json_object_object_get(json_object_object_get(duration, "duration"), "value"))/60);
-
-        struct json_object *end_location = json_object_array_get_idx(legs, 0);
-              //  printf("Object end_location is %s\n", json_object_get_string(json_object_object_get(end_location, "end_location")));
          
 	return json_object_get_int(json_object_object_get(json_object_object_get(duration, "duration"), "value"))/60;
         if(res != CURLE_OK)
@@ -108,6 +95,6 @@ int getDuration(double doubleLatitude, double doubleLongitude,char destination[M
 }
 
 
-// Documentation : https://developers.google.com/maps/documentation/directions/get-directions?hl=fr
+
 
 

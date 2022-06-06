@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <pthread.h>
-#include <string.h>
-#include <wiringPi.h>
 #include "reveil.h"
-void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
-void declencherBuzzer();
 
 void *reveilThread(void *arg)
 {
@@ -15,7 +7,7 @@ void *reveilThread(void *arg)
   heureReveil_t *heureReveil =(heureReveil_t *)arg;
   getTimeNow(&h, &min, &s, &day, &mois, &an);
   printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
-	printf("titre de l'event %s \n",heureReveil->titre);
+  printf("titre de l'event %s \n",heureReveil->titre);
 
   while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
   	getTimeNow(&h, &min, &s, &day, &mois, &an);
@@ -40,47 +32,34 @@ void *reveilThread(void *arg)
 
 int main(void)
 {
+  /*déclaration des vars*/
   FILE *f,*f2;
   char c,c2;
   int date[6]={0};
-
- 
-    pthread_t th;
-  //  int heureReveil[5][5] = {0};
-    heureReveil_t *heureReveil[5];
+  pthread_t th;
+  heureReveil_t *heureReveil[5];
   char phraseReveil[100][300] = {""};
-   char phraseReveilTemp[300] = {""};
+  char phraseReveilTemp[300] = {""};
   int firstTime=1;
-    	int nblignes=0;
-delay(30000);
-system("python3 quickstart.py");
-	printf("hre \n");
+  int nblignes=0,nblignes2=0,cpt=0;
+  int nbligneslues=0,k=0,m=0,quitter=0;
+
+  /*lancement du programme python pour récuperer les events*/
+  delay(30000); // a modifier
+	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
+  system("python3 quickstart.py");
+
    while(1)
    {
-printf("hre \n");
-   	f=fopen("agenda.txt","r");
-	f2=fopen("events.txt","w+");
-printf("hre \n");
-	int nblignes2=0;
-    	while((c2=fgetc(f2))!=255){
-    		if(c2=='\n')
-    		{
-    			nblignes2++;
-    		}	
-    	}
-printf("hre \n");
-    	rewind(f2);
-printf("hre \n");
-    	printf("nblignes22 %d \n",nblignes2);
-printf("hre \n");
-  	int nbligneslues=0;
-  	int k=0;
-printf("hre \n");
-  	while((c=fgetc(f))!=255){
-printf("hre \n");
-  		if(firstTime==1)
+   	f=fopen("agenda.txt","r"); // fichier contenant les evenements
+	f2=fopen("events.txt","w+"); // ce fichier contenant les nouveaux evenements qui seront planifiés
+	
+  	nbligneslues=0;
+  	k=0;
+  	while((c=fgetc(f))!=255){ // jusqu'à la fin du fichier
+
+  		if(firstTime==1) // premiere fois où l'utilisateur exécute le programme
   		{
-printf("hre \n");
 			if(c=='\n')
 			{
 				nblignes++;	
@@ -97,13 +76,12 @@ printf("hre \n");
         		if(c=='\n')
 			{
 				printf("phraseReveilTemp %s \n",phraseReveilTemp);
-				int m=0;
-				int quitter=0;
+				m=0;
+				quitter=0;
 				while(m<nblignes && quitter==0)
 				{
-					if(strcmp(phraseReveil[m],phraseReveilTemp)==0)
+					if(strcmp(phraseReveil[m],phraseReveilTemp)==0) // verification si cette ligne execute deja dans le tableau qui contient les évenements passés
 					{
-						// an7al whd l fichier houwa fin andir ghir les events jdad, mais khass nstocki had jdad f phraseReveil normal bach l mara jaya nl9ahoum! 
 						printf("existe \n");
 						quitter=1;
 						memset(phraseReveilTemp,'\0',300);
@@ -113,7 +91,7 @@ printf("hre \n");
 				}
 				if(quitter==0)
 				{
-						printf("je vais l'ajouter %s \n",phraseReveilTemp);
+						printf("un nouveau event %s \n",phraseReveilTemp);
 						fputs(phraseReveilTemp, f2);
 						fputc('\n',f2);
 						strcpy(phraseReveil[nblignes],phraseReveilTemp);
@@ -140,7 +118,7 @@ printf("hre \n");
     	}
     	rewind(f2);
     	rewind(f); // renvoyer à la pos 0	
-    	printf("nblignes %d \n",nblignes2);
+    	/*printf("nblignes %d \n",nblignes2);
     	char chaine[300] = ""; 
     	printf("f * ************** \n");
     	for(int l=0; l<nblignes; l++)
@@ -159,105 +137,112 @@ printf("hre \n");
     	printf("f2 * ************** \n");
     	rewind(f2);
     	rewind(f); // renvoyer à la pos 0
-    if(nblignes2 > 0){
-  do
-  {	
-	heureReveil[nbligneslues] = (heureReveil_t *)malloc(sizeof(heureReveil_t));
-  	fscanf(f2,"%d-%d-%dT%d:%d",&date[0],&date[1],&date[2],&date[3],&date[4]);
+	*/
+	// debug a enlever plus tard
+   	if(nblignes2 > 0){
+		  do
+		  {	
+			heureReveil[nbligneslues] = (heureReveil_t *)malloc(sizeof(heureReveil_t));
 
-  	int cpt=0;
+		  	fscanf(f2,"%d-%d-%dT%d:%d",&date[0],&date[1],&date[2],&date[3],&date[4]);
 
-  	printf("heure initial %d %d %d %d %d\n",date[0],date[1],date[2],date[3],date[4]);
+		  	cpt=0;
 
-  	while(cpt<10)
-  	{
-  		c=fgetc(f2);
-  		cpt++;
+		  	printf("heure evenement %d %d %d %d %d\n",date[0],date[1],date[2],date[3],date[4]);
+
+		  	while(cpt<10)
+		  	{
+		  		c=fgetc(f2);
+		  		cpt++;
+		  	}
+		  	cpt=0;
+
+		  	while((c=fgetc(f2))!='!')
+		  	{
+		  		
+		  		heureReveil[nbligneslues]->titre[cpt]=c;
+		  		cpt++;
+		  	}
+		 	heureReveil[nbligneslues]->titre[cpt]='\0';
+		  	cpt=0;
+
+		  	while((c=fgetc(f2))!='!')
+		  	{
+		  		heureReveil[nbligneslues]->mode[cpt]=c;
+		  		cpt++;
+		  	}
+		  	heureReveil[nbligneslues]->mode[cpt]='\0';
+		  	cpt=0;
+
+		  	while((c=fgetc(f2))!='!')
+		  	{
+		  		heureReveil[nbligneslues]->destination[cpt]=c;
+		  		cpt++;
+		  	}
+		  	heureReveil[nbligneslues]->destination[cpt]='\0';
+		  	cpt=0;
+
+		  	char notifreveil[3]; 
+		  	while((c=fgetc(f2))!='!')
+		  	{
+		  		notifreveil[cpt]=c;
+		  		cpt++;
+		  	}
+		  	notifreveil[cpt]='\0';
+			int notifreveilenint=atoi(notifreveil);
+
+		  	int duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+
+
+
+		  	while(duree_trajet>0)
+		  	{
+		  		// a modifier pour prendre en compte heure <0 et jour mois année 
+			  	while(date[4]>=0 && duree_trajet>0)
+			  	{
+			  		date[4]-=1;
+			  		duree_trajet-=1;
+			  	}
+			  	if(duree_trajet>0)
+			  	{
+			  		date[3]-=1;
+			  		date[4]=59;
+			  	}
+		  	}
+		  	
+		  	while(notifreveilenint>0)
+		  	{
+		  		// a modifier pour prendre en compte heure <0 et jour mois année 
+			  	while(date[4]>=0 && notifreveilenint>0)
+			  	{
+			  		date[4]-=1;
+			  		notifreveilenint-=1;
+			  	}
+			  	if(notifreveilenint>0)
+			  	{
+			  		date[3]-=1;
+			  		date[4]=59;
+			  	}
+		  	}
+		  	
+		  	
+		  	
+		  
+
+		  	heureReveil[nbligneslues]->annee = date[0];
+		  	heureReveil[nbligneslues]->mois = date[1];
+		  	heureReveil[nbligneslues]->jour = date[2];
+		  	heureReveil[nbligneslues]->heure = date[3];
+		  	heureReveil[nbligneslues]->min = date[4];
+		  	
+		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
+		  	delay(2000);
+		  	while((c=fgetc(f2))!='\n');
+		  	nbligneslues++;
+		  
+		  }while(c!=255 && nbligneslues!=nblignes2);
   	}
-  	cpt=0;
-  	while((c=fgetc(f2))!='!')
-  	{
-  		
-  		heureReveil[nbligneslues]->titre[cpt]=c;
-  		cpt++;
-  	}
- 	heureReveil[nbligneslues]->titre[cpt]='\0';
-  	cpt=0;
-  	while((c=fgetc(f2))!='!')
-  	{
-  		heureReveil[nbligneslues]->mode[cpt]=c;
-  		cpt++;
-  	}
-  	heureReveil[nbligneslues]->mode[cpt]='\0';
-  	cpt=0;
-  	while((c=fgetc(f2))!='!')
-  	{
-  		heureReveil[nbligneslues]->destination[cpt]=c;
-  		cpt++;
-  	}
-  	heureReveil[nbligneslues]->destination[cpt]='\0';
-  	cpt=0;
-  	char notifreveil[3]; 
-  	while((c=fgetc(f2))!='!')
-  	{
-  		notifreveil[cpt]=c;
-  		cpt++;
-  	}
-  	notifreveil[cpt]='\0';
-	int notifreveilenint=atoi(notifreveil);
-
-  	int duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
-
-
-
-  	while(duree_trajet>0)
-  	{
-  		// a modifier pour prendre en compte heure <0 et jour mois année 
-	  	while(date[4]>=0 && duree_trajet>0)
-	  	{
-	  		date[4]-=1;
-	  		duree_trajet-=1;
-	  	}
-	  	if(duree_trajet>0)
-	  	{
-	  		date[3]-=1;
-	  		date[4]=59;
-	  	}
-  	}
-  	
-  	while(notifreveilenint>0)
-  	{
-  		// a modifier pour prendre en compte heure <0 et jour mois année 
-	  	while(date[4]>=0 && notifreveilenint>0)
-	  	{
-	  		date[4]-=1;
-	  		notifreveilenint-=1;
-	  	}
-	  	if(notifreveilenint>0)
-	  	{
-	  		date[3]-=1;
-	  		date[4]=59;
-	  	}
-  	}
-  	
-  	
-  	
-  
-
-  	heureReveil[nbligneslues]->annee = date[0];
-  	heureReveil[nbligneslues]->mois = date[1];
-  	heureReveil[nbligneslues]->jour = date[2];
-  	heureReveil[nbligneslues]->heure = date[3];
-  	heureReveil[nbligneslues]->min = date[4];
-  	
-  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
-  	delay(2000);
-  	while((c=fgetc(f2))!='\n');
-  	nbligneslues++;
-  
-  }while(c!=255 && nbligneslues!=nblignes2);
-  }
-  	  	delay(30000);
+  	  	delay(30000);// relancer le programme de recuperation des evenements chaque 30 secondes
 	  	system("python3 quickstart.py");
 	  	firstTime=0;
 
