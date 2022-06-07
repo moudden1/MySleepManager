@@ -22,6 +22,14 @@ GtkApplication *app;
 static void Stop (GtkWidget *widget, gpointer   data)
 {
   pinMode (27, INPUT) ;
+ /* if(get_motion() == 0){
+    delay(5000);
+    pinMode (27, OUTPUT) ;
+    delay(5000);
+    }
+    pinMode (27, INPUT) ;
+  
+  */
 }
 static void wait_5_min (GtkWidget *widget, gpointer   data)
 {
@@ -52,5 +60,30 @@ static void activate (GtkApplication *app,gpointer        user_data)
   gtk_widget_show_all (window);
 }
 
+
+int get_motion(){
+   wiringPiSetup () ;
+  pinMode (MOTION, INPUT) ;
+  time_t begintime, starttime,endtime;
+  time ( &begintime );
+  
+  while (difftime(  begintime, starttime) < 120){
+    printf("%d \n",difftime(  begintime, starttime));
+	time ( &starttime );
+	while(digitalRead(MOTION)) {
+		delay(100);
+	}
+	time ( &endtime );
+	if(difftime(  endtime, starttime) > 2){
+		printf("Detected long motion \n");
+    return 1;
+	}
+	return 0;
+  }
+  
+  
+  
+  
+  }
 
 

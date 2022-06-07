@@ -1,5 +1,33 @@
 #include "reveil.h"
+void *sub_mqtt(void *arg)
+{
+	int rc, id=1245;
 
+	mosquitto_lib_init();
+
+	struct mosquitto *mosq;
+
+	mosq = mosquitto_new("subscribe-test", true, &id);
+	mosquitto_connect_callback_set(mosq, on_connect);
+	mosquitto_message_callback_set(mosq, on_message);
+	
+	rc = mosquitto_connect(mosq, "mqtt.fluux.io", 1883, 10);
+	if(rc) {
+		printf("Could not connect to Broker with return code %d\n", rc);
+		return -1;
+	}
+
+	mosquitto_loop_start(mosq);
+	printf("Press Enter to quit...\n");
+	getchar();
+	mosquitto_loop_stop(mosq, true);
+
+	mosquitto_disconnect(mosq);
+	mosquitto_destroy(mosq);
+	mosquitto_lib_cleanup();
+
+	return 0;
+}
 void *reveilThread(void *arg)
 {
   int h, min, s, day, mois, an;
@@ -61,9 +89,9 @@ void *reveilThread(void *arg)
 		  		}
 			}
   		}
-  		printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
+  	//	printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
 		tempsrestant-=15;
-printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
+//printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
 		delay(3000);
   	}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
@@ -87,16 +115,6 @@ void *reveilThread2(void *arg)
   }
   while(h != heureReveil->heure || min != heureReveil->min)
   {
-  	//if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min+120))
-  	//{
-  		//int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
-  		/*if(duree_trajet_thread != )
-  		{
-  			
-  		}*/
-  		//printf("reste moins de 2 heures pour le reveil \n");
-  		//de
-  	//}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
   declencherBuzzer();
@@ -108,10 +126,10 @@ void *reveilThread2(void *arg)
 int main(void)
 {
   /*déclaration des vars*/
-  FILE *f,*f2;
+  FILE *f,*f2,*f3;
   char c,c2;
   int date[6]={0};
-  pthread_t th;
+  pthread_t th,th2;
   heureReveil_t *heureReveil[5];
   char phraseReveil[100][300] = {""};
   char phraseReveilTemp[300] = {""};
@@ -122,7 +140,8 @@ int main(void)
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
   system("python3 quickstart.py");
-
+	pthread_create(&th2, NULL, sub_mqtt, NULL);
+	f3=fopen("sensor.txt","w+");
    while(1)
    {
    	f=fopen("agenda.txt","r"); // fichier contenant les evenements
@@ -284,7 +303,7 @@ int main(void)
 			  	}
 		  	}
 		  	
-		  	while(notifreveilenint>0)
+		  	/*while(notifreveilenint>0)
 		  	{
 		  		// a modifier pour prendre en compte heure <0 et jour mois année 
 			  	while(date[4]>=0 && notifreveilenint>0)
@@ -299,7 +318,7 @@ int main(void)
 			  	}
 		  	}
 		  	
-		  	
+		  	*/
 		  	
 		  
 
@@ -323,8 +342,10 @@ pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 
  }
   pthread_join(th, NULL);
+  pthread_join(th2, NULL);
   fclose(f);
   fclose(f2);
+  fclose(f3);
   return 0;
 }
 
@@ -356,3 +377,30 @@ void declencherBuzzer()
   }
 }
 // crontab
+
+
+
+
+void on_connect(struct mosquitto *mosq, void *obj, int rc) {
+	printf("ID: %d\n", * (int *) obj);
+	if(rc) {
+		printf("Error with result code: %d\n", rc);
+		exit(-1);
+	}
+	if(mosquitto_subscribe(mosq, NULL, "sensors/pulse", 2)!=MOSQ_ERR_SUCCESS){
+		printf("Error with subscription \n");
+		exit(-1);
+	}
+	else printf(" subscription ok \n");
+	
+	
+}
+
+void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
+	FILE *f;
+	f=fopen("sensor.txt","a");
+	fputs((char *) msg->payload, f);
+	fputc('\n',f);
+	printf("New message with topic %s",(char *) msg->payload);
+	fclose(f);
+}
