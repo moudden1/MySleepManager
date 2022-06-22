@@ -1,3 +1,0 @@
-2022-06-04T18:00:00+02:00 pariseve!driving!Paris, France!120!
-2022-06-04T21:10:00+02:00 lenseve!driving!Centrale Lille IG2I : Institut de Génie Informatique et Industriel, 13 Rue Jean Souvraz, 62300 Lens, France!60!
-2022-06-04T23:30:00+02:00 betheve!driving!Béthune, France!30!
