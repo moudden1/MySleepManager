@@ -117,7 +117,7 @@ void *reveilThread2(void *arg)
   {
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
-  declencherBuzzer();
+  //declencherBuzzer();
   printf("time here 2!!!! \n");
 }
 
@@ -150,7 +150,7 @@ printf("a \n");
 	
   	nbligneslues=0;
   	k=0;
-  	while((c=fgetc(f))!=255){ // jusqu'à la fin du fichier
+  	while((c=fgetc(f))!=EOF){ // jusqu'à la fin du fichier
 
   		if(firstTime==1) // premiere fois où l'utilisateur exécute le programme
   		{
@@ -204,7 +204,7 @@ printf("a \n");
     	k=0;
      	nblignes2=0;
     	rewind(f2);
-    	while((c2=fgetc(f2))!=255){
+    	while((c2=fgetc(f2))!=EOF){
     		if(c2=='\n')
     		{
     			nblignes2++;
@@ -293,7 +293,7 @@ printf("a \n");
 		  	while(temp>0)
 		  	{
 		  		// a modifier pour prendre en compte heure <0 et jour mois année 
-			  	while(date[4]>=0 && temp>0)
+			  	while(date[4]>0 && temp>0)
 			  	{
 			  		date[4]-=1;
 			  		temp-=1;
@@ -302,13 +302,13 @@ printf("a \n");
 			  	{
 			  		date[3]-=1;
 			  		date[4]=59;
+					temp--;
 			  	}
 		  	}
-		  	
 		  	while(notifreveilenint>0)
 		  	{
 		  		// a modifier pour prendre en compte heure <0 et jour mois année 
-			  	while(date[4]>=0 && notifreveilenint>0)
+			  	while(date[4]>0 && notifreveilenint>0)
 			  	{
 			  		date[4]-=1;
 			  		notifreveilenint-=1;
@@ -317,7 +317,9 @@ printf("a \n");
 			  	{
 			  		date[3]-=1;
 			  		date[4]=59;
+					notifreveilenint--;
 			  	}
+				
 		  	}
 		  	
 		  	
@@ -335,7 +337,7 @@ pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	while((c=fgetc(f2))!='\n');
 		  	nbligneslues++;
 		  
-		  }while(c!=255 && nbligneslues!=nblignes2);
+		  }while(c!=EOF && nbligneslues!=nblignes2);
   	}
   	  	delay(30000);// relancer le programme de recuperation des evenements chaque 30 secondes
 	  	system("python3 quickstart.py");

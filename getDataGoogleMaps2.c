@@ -84,7 +84,6 @@ int getDuration(double doubleLatitude, double doubleLongitude,char destination[M
         size_t legslen = json_object_array_length(legs);
 
         struct json_object *duration = json_object_array_get_idx(legs, 0);
-         
 	return json_object_get_int(json_object_object_get(json_object_object_get(duration, "duration"), "value"))/60;
         if(res != CURLE_OK)
             fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));

@@ -21,7 +21,7 @@ GtkApplication *app;
 
 static void Stop (GtkWidget *widget, gpointer   data)
 {
-  pinMode (27, INPUT) ;
+  //pinMode (27, INPUT) ;
  /* if(get_motion() == 0){
     delay(5000);
     pinMode (27, OUTPUT) ;
