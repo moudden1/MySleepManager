@@ -100,7 +100,7 @@ void *reveilThread(void *arg)
   start_alarm_app(NULL, NULL);
   printf("time here !!!! \n");
 }
-
+// todo : ajouter dans le 2
 void *reveilThread2(void *arg)
 {
   int h, min, s, day, mois, an;
