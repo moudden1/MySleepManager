@@ -96,31 +96,26 @@ void *reveilThread(void *arg)
   	}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
   }
-  //declencherBuzzer();
-  start_alarm_app(NULL, NULL);
+  
+  //start_alarm_app(0, "");
+  
+  int pid_fils; pid_fils = fork(); 
+  switch(pid_fils) { 
+  	case -1: 
+  		CHECK(pid_fils,"Ne peut pas créer un processus fils"); 
+  		break; 
+  		
+  	case 0: 
+  		declencherBuzzer();
+  		break;
+  	default: 
+  		start_alarm_app(0, "");
+  		kill(pid_fils, SIGKILL); 
+  }
+  
+  
   printf("time here !!!! \n");
 }
-
-void *reveilThread2(void *arg)
-{
-  int h, min, s, day, mois, an;
-  int duree_trajet_thread;
-  heureReveil_t *heureReveil =(heureReveil_t *)arg;
-  getTimeNow(&h, &min, &s, &day, &mois, &an);
-  printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
-  printf("titre de l'event %s \n",heureReveil->titre);
-
-  while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
-  	getTimeNow(&h, &min, &s, &day, &mois, &an);
-  }
-  while(h != heureReveil->heure || min != heureReveil->min)
-  {
-  	getTimeNow(&h, &min, &s, &day, &mois, &an);	
-  }
-  //declencherBuzzer();
-  printf("time here 2!!!! \n");
-}
-
 
 
 int main(void)
@@ -332,7 +327,6 @@ printf("a \n");
 		  	heureReveil[nbligneslues]->min = date[4];
 		  	
 		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
-pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	delay(2000);
 		  	while((c=fgetc(f2))!='\n');
 		  	nbligneslues++;
