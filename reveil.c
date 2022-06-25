@@ -1,4 +1,5 @@
 #include "reveil.h"
+//TO DELETE IN FUTURE TASK
 void *sub_mqtt(void *arg)
 {
 	int rc, id=1245;
@@ -28,6 +29,7 @@ void *sub_mqtt(void *arg)
 
 	return 0;
 }
+////////////////////////////END DEL
 void *reveilThread(void *arg)
 {
   int h, min, s, day, mois, an;
@@ -140,8 +142,12 @@ int main(void)
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
   system("python3 quickstart.py");
+  //TO DELETE IN FUTURE TASK
 	pthread_create(&th2, NULL, sub_mqtt, NULL);
+	////////////////////////////END DEL
+	//TO DELETE IN FUTURE TASK
 	f3=fopen("sensor.txt","w+");
+	////////////////////////////END DEL
 printf("a \n");
    while(1)
    {
@@ -345,10 +351,14 @@ pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 
  }
   pthread_join(th, NULL);
+  //TO DELETE IN FUTURE TASK
   pthread_join(th2, NULL);
+  ////////////////////////////END DEL
   fclose(f);
   fclose(f2);
+  //TO DELETE IN FUTURE TASK
   fclose(f3);
+  ////////////////////////////END DEL
   return 0;
 }
 
@@ -383,7 +393,7 @@ void declencherBuzzer()
 
 
 
-
+//TO DELETE IN FUTURE TASK
 void on_connect(struct mosquitto *mosq, void *obj, int rc) {
 	printf("ID: %d\n", * (int *) obj);
 	if(rc) {
@@ -398,7 +408,9 @@ void on_connect(struct mosquitto *mosq, void *obj, int rc) {
 	
 	
 }
+////////////////////////////END DEL
 
+//TO DELETE IN FUTURE TASK
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
 	FILE *f;
 	f=fopen("sensor.txt","a");
@@ -407,3 +419,4 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
 	printf("New message with topic %s",(char *) msg->payload);
 	fclose(f);
 }
+////////////////////////////END DEL
