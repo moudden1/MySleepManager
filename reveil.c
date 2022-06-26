@@ -47,48 +47,51 @@ void *reveilThread(void *arg)
 	//printf("%d \n",h*60+min-tempsrestant);
   	if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min-tempsrestant))
   	{
-  		int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
-  		if(duree_trajet_thread != heureReveil->duree_trajet)
-  		{
-  			int diff = duree_trajet_thread - heureReveil->duree_trajet;
-			heureReveil->duree_trajet = duree_trajet_thread;
-			printf("difference entre les deux %d avant moins de %d min  \n",diff,tempsrestant);
-			delay(3000);
-			if(diff > 0)
+		if(heureReveil->duree_trajet!=0)
+		{
+			int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+			if(duree_trajet_thread != heureReveil->duree_trajet)
 			{
-				while(diff>0)
-		  		{
-			  		// a modifier pour prendre en compte heure <0 et jour mois année 
-				  	while(heureReveil->min>=0 && diff>0)
-				  	{
-				  		heureReveil->min-=1;
-				  		diff-=1;
-				  	}
-				  	if(diff>0)
-				  	{
-				  		heureReveil->heure-=1;
-				  		heureReveil->min=59;
-				  	}
-		  		}
+				int diff = duree_trajet_thread - heureReveil->duree_trajet;
+				heureReveil->duree_trajet = duree_trajet_thread;
+				printf("difference entre les deux %d avant moins de %d min  \n",diff,tempsrestant);
+				delay(3000);
+				if(diff > 0)
+				{
+					while(diff>0)
+					{
+						// a modifier pour prendre en compte heure <0 et jour mois année 
+						while(heureReveil->min>=0 && diff>0)
+						{
+							heureReveil->min-=1;
+							diff-=1;
+						}
+						if(diff>0)
+						{
+							heureReveil->heure-=1;
+							heureReveil->min=59;
+						}
+					}
+				}
+				else
+				{
+					while(diff<0)
+					{
+						// a modifier pour prendre en compte heure <0 et jour mois année 
+						while(heureReveil->min>=0 && diff<0)
+						{
+							heureReveil->min+=1;
+							diff+=1;
+						}
+						if(diff<0)
+						{
+							heureReveil->heure+=1;
+							heureReveil->min=59;
+						}
+					}
+				}
 			}
-			else
-			{
-				while(diff<0)
-		  		{
-			  		// a modifier pour prendre en compte heure <0 et jour mois année 
-				  	while(heureReveil->min>=0 && diff<0)
-				  	{
-				  		heureReveil->min+=1;
-				  		diff+=1;
-				  	}
-				  	if(diff<0)
-				  	{
-				  		heureReveil->heure+=1;
-				  		heureReveil->min=59;
-				  	}
-		  		}
-			}
-  		}
+		}
   	//	printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
 		tempsrestant-=15;
 //printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
@@ -236,7 +239,6 @@ printf("a \n");
    	if(nblignes2 > 0){
 		  do
 		  {	
-		  	printf("here \n");
 			heureReveil[nbligneslues] = (heureReveil_t *)malloc(sizeof(heureReveil_t));
 
 		  	fscanf(f2,"%d-%d-%dT%d:%d",&date[0],&date[1],&date[2],&date[3],&date[4]);
@@ -285,10 +287,17 @@ printf("a \n");
 		  	}
 		  	notifreveil[cpt]='\0';
 			int notifreveilenint=atoi(notifreveil);
-
-		  	heureReveil[nbligneslues]->duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+			if(strcmp(heureReveil[nbligneslues]->destination,"vide")==0)
+			{
+				printf("vide \n");
+				heureReveil[nbligneslues]->duree_trajet=0;
+			}
+			else
+			{
+				printf("y une desti");
+		  		heureReveil[nbligneslues]->duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
+			}
 			int temp = heureReveil[nbligneslues]->duree_trajet;
-
 
 		  	while(temp>0)
 		  	{

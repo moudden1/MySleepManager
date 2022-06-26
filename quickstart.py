@@ -55,15 +55,21 @@ def main():
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             reminders = event['reminders']
-            print(start, event['summary'])
+       #     print(start, event['summary'])
             print(event)
             fichier.write(start + " ")
-            fichier.write(event['summary'] + "!")
+            if "summary" in event:
+                fichier.write(event['summary'] + "!")
+            else:
+                fichier.write("rien!")
             if "description" in event:
             	fichier.write(event['description'] + "!")
             else:
             	fichier.write("driving" + "!")
-            fichier.write(event['location'] + "!")
+            if "location" in event:
+                fichier.write(event['location'] + "!")
+            else:
+                fichier.write("vide!")
             if "overrides" in reminders:
             	fichier.write(str(reminders['overrides'][0]['minutes'])+'!\n')
             else:
