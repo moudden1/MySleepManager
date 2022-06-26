@@ -289,12 +289,10 @@ printf("a \n");
 			int notifreveilenint=atoi(notifreveil);
 			if(strcmp(heureReveil[nbligneslues]->destination,"vide")==0)
 			{
-				printf("vide \n");
 				heureReveil[nbligneslues]->duree_trajet=0;
 			}
 			else
 			{
-				printf("y une desti");
 		  		heureReveil[nbligneslues]->duree_trajet = getDuration(50.62925,3.057256,heureReveil[nbligneslues]->destination, heureReveil[nbligneslues]->mode);
 			}
 			int temp = heureReveil[nbligneslues]->duree_trajet;
