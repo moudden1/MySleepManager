@@ -1,4 +1,4 @@
-#include "include/reveil.h"
+#include "../include/reveil.h"
 void *sub_mqtt(void *arg)
 {
 	int rc, id=1245;
@@ -142,7 +142,7 @@ int main(void)
 
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
-  system("python3 quickstart.py");
+  system("python3 src/quickstart.py");
 	pthread_create(&th2, NULL, sub_mqtt, NULL);
 	f3=fopen("sensor.txt","w+");
 printf("a \n");
@@ -349,7 +349,7 @@ pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  }while(c!=EOF && nbligneslues!=nblignes2);
   	}
   	  	delay(30000);// relancer le programme de recuperation des evenements chaque 30 secondes
-	  	system("python3 quickstart.py");
+	  	system("python3 src/quickstart.py");
 	  	firstTime=0;
 
  }
