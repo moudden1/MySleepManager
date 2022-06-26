@@ -28,7 +28,96 @@ void *sub_mqtt(void *arg)
 
 	return 0;
 }
+
 void *reveilThread(void *arg)
+{
+  int h, min, s, day, mois, an;
+  int duree_trajet_thread;
+  heureReveil_t *heureReveil =(heureReveil_t *)arg;
+  getTimeNow(&h, &min, &s, &day, &mois, &an);
+  int tempsrestant = 120;
+  printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
+  printf("titre de l'event %s \n",heureReveil->titre);
+
+  while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
+  	getTimeNow(&h, &min, &s, &day, &mois, &an);
+  }
+  while(h != heureReveil->heure || min != heureReveil->min)
+  {
+	//printf("1 %d \n",heureReveil->heure * 60 + heureReveil->min);
+	//printf("%d \n",h*60+min-tempsrestant);
+  	if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min-tempsrestant))
+  	{
+		if(heureReveil->duree_trajet!=0)
+		{
+			int duree_trajet_thread = getDuration(50.62925,3.057256,heureReveil->destination, heureReveil->mode);
+			if(duree_trajet_thread != heureReveil->duree_trajet)
+			{
+				int diff = duree_trajet_thread - heureReveil->duree_trajet;
+				heureReveil->duree_trajet = duree_trajet_thread;
+				printf("difference entre les deux %d avant moins de %d min  \n",diff,tempsrestant);
+				delay(3000);
+				if(diff > 0)
+				{
+					while(diff>0)
+					{
+						// a modifier pour prendre en compte heure <0 et jour mois annÃ©e 
+						while(heureReveil->min>=0 && diff>0)
+						{
+							heureReveil->min-=1;
+							diff-=1;
+						}
+						if(diff>0)
+						{
+							heureReveil->heure-=1;
+							heureReveil->min=59;
+						}
+					}
+				}
+				else
+				{
+					while(diff<0)
+					{
+						// a modifier pour prendre en compte heure <0 et jour mois annÃ©e 
+						while(heureReveil->min>=0 && diff<0)
+						{
+							heureReveil->min+=1;
+							diff+=1;
+						}
+						if(diff<0)
+						{
+							heureReveil->heure+=1;
+							heureReveil->min=59;
+						}
+					}
+				}
+			}
+		}
+  	//	printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
+		tempsrestant-=15;
+//printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
+		delay(3000);
+  	}
+  	getTimeNow(&h, &min, &s, &day, &mois, &an);	
+  }
+  
+  int pid_fils; pid_fils = fork(); 
+  switch(pid_fils) { 
+  	case -1: 
+  		printf("Ne peut pas crÃ©er un processus fils"); 
+  		break; 
+
+  	case 0: 
+  		//declencherBuzzer();
+  		break;
+  	default: 
+  		start_alarm_app(0, "");
+  		kill(pid_fils, SIGKILL); 
+		break;
+	}
+}
+
+/*void *reveilThread(void *arg)
 {
   int h, min, s, day, mois, an;
   int duree_trajet_thread;
@@ -102,9 +191,9 @@ void *reveilThread(void *arg)
   //declencherBuzzer();
   start_alarm_app(NULL, NULL);
   printf("time here !!!! \n");
-}
+}*/
 // todo : ajouter dans le 2
-void *reveilThread2(void *arg)
+/*void *reveilThread2(void *arg)
 {
   int h, min, s, day, mois, an;
   int duree_trajet_thread;
@@ -122,7 +211,7 @@ void *reveilThread2(void *arg)
   }
   //declencherBuzzer();
   printf("time here 2!!!! \n");
-}
+}*/
 
 
 
@@ -339,7 +428,7 @@ printf("a \n");
 		  	heureReveil[nbligneslues]->min = date[4];
 		  	
 		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil[nbligneslues]);
-pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
+//pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	delay(2000);
 		  	while((c=fgetc(f2))!='\n');
 		  	nbligneslues++;
