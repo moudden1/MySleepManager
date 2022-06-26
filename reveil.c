@@ -111,6 +111,7 @@ void *reveilThread(void *arg)
   	default: 
   		start_alarm_app(0, "");
   		kill(pid_fils, SIGKILL); 
+		break;
   }
   
   
