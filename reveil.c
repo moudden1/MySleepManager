@@ -146,7 +146,7 @@ printf("a \n");
 	
   	nbligneslues=0;
   	k=0;
-  	while((c=fgetc(f))!=EOF){ // jusqu'à la fin du fichier
+  	while((c=fgetc(f))!=255){ // jusqu'à la fin du fichier
 
   		if(firstTime==1) // premiere fois où l'utilisateur exécute le programme
   		{
