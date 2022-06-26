@@ -1,5 +1,5 @@
-#include "affiche_heur.h"
-#include "getDataMeteo.h"
+#include "include/affiche_heur.h"
+#include "include/getDataMeteo.h"
 
 
 int main (int    argc,char **argv){

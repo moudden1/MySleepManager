@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "getdatagooglemaps2.h": "c",
+        "affiche_heur.h": "c",
+        "getdatameteo.h": "c"
+    }
+}
