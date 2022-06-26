@@ -102,7 +102,7 @@ void *reveilThread(void *arg)
   int pid_fils; pid_fils = fork(); 
   switch(pid_fils) { 
   	case -1: 
-  		CHECK(pid_fils,"Ne peut pas créer un processus fils"); 
+  		printf("Ne peut pas créer un processus fils"); 
   		break; 
   		
   	case 0: 
