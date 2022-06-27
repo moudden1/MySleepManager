@@ -8,21 +8,14 @@ void *reveilThread(void *arg)
   heureReveil_t *heureReveil =(heureReveil_t *)arg;
   getTimeNow(&h, &min, &s, &day, &mois, &an);
   int tempsrestant = 120;
-  printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
   printf("titre de l'event %s \n",heureReveil->titre);
-    printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
-    printf("heure actuelle %d %d %d\n",an,mois, day,heureReveil->heure,heureReveil->min);
-
-	printf("ok 1\n");
+  printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
 
   while(an != heureReveil->annee || mois != heureReveil->mois || day != heureReveil->jour){
   	getTimeNow(&h, &min, &s, &day, &mois, &an);
   }
   while(h != heureReveil->heure || min != heureReveil->min)
   {
-	printf("ok 3\n");
-	//printf("1 %d \n",heureReveil->heure * 60 + heureReveil->min);
-	//printf("%d \n",h*60+min-tempsrestant);
   	if((heureReveil->heure * 60 + heureReveil->min ) > (h*60+min-tempsrestant))
   	{
 		if(heureReveil->duree_trajet!=0)
@@ -38,7 +31,6 @@ void *reveilThread(void *arg)
 				{
 					while(diff>0)
 					{
-						// a modifier pour prendre en compte heure <0 et jour mois annÃ©e 
 						while(heureReveil->min>=0 && diff>0)
 						{
 							heureReveil->min-=1;
@@ -55,7 +47,6 @@ void *reveilThread(void *arg)
 				{
 					while(diff<0)
 					{
-						// a modifier pour prendre en compte heure <0 et jour mois annÃ©e 
 						while(heureReveil->min>=0 && diff<0)
 						{
 							heureReveil->min+=1;
@@ -70,9 +61,7 @@ void *reveilThread(void *arg)
 				}
 			}
 		}
-  	//	printf("nouvelle duree %d, temps resrtant moins de %d \n",heureReveil->duree_trajet,tempsrestant);
 		tempsrestant-=15;
-//printf("heure reveil %d %d %d %d %d\n",heureReveil->annee,heureReveil->mois, heureReveil->jour,heureReveil->heure,heureReveil->min);
 		delay(3000);
   	}
   	getTimeNow(&h, &min, &s, &day, &mois, &an);	
@@ -85,11 +74,9 @@ void *reveilThread(void *arg)
   		break; 
 
   	case 0: 
-		printf("one \n");
   		//declencherBuzzer();
   		break;
   	default: 
-		printf("two \n");
   		start_alarm_app(0, "");
   		kill(pid_fils, SIGKILL); 
 		break;
@@ -99,33 +86,25 @@ void *reveilThread(void *arg)
 int main(void)
 {
   /*déclaration des vars*/
-  FILE *f,*f2,*f3;
-  char c,c2;
-  int date[6]={0};
-  pthread_t th,th2;
+  FILE *f;
+  char c;
+  int date[6]={0},nbligneslues=0,cpt=0;
+  pthread_t th;
   heureReveil_t *heureReveil;
-  char phraseReveil[100][300] = {""};
-  char phraseReveilTemp[300] = {""};
-  int firstTime=1;
-  int nblignes=0,nblignes2=0,cpt=0;
-  int nbligneslues=0,k=0,m=0,quitter=0;
+
 
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
   system("python3 src/quickstart.py");
-	//pthread_create(&th2, NULL, sub_mqtt, NULL);
-	//f3=fopen("sensor.txt","w+");
-  //printf("a \n");
+	
    while(1)
    {
    	f=fopen("agenda.txt","r"); // fichier contenant les evenements
-	//f2=fopen("events.txt","w+"); // ce fichier contenant les nouveaux evenements qui seront planifiés
-	if( c=fgetc(f) != EOF)
+	if( c=fgetc(f) != EOF) // verifier qu'il contient une ligne
 	{
 	  	nbligneslues=1;
 	}
 	rewind(f);
-  	k=0;
   	if(nbligneslues>0) /// jusqu'à la fin du fichier
 	{ 
 			heureReveil= (heureReveil_t *)malloc(sizeof(heureReveil_t));
@@ -135,7 +114,6 @@ int main(void)
 		  	cpt=0;
 
 		  	printf("heure evenement %d %d %d %d %d\n",date[0],date[1],date[2],date[3],date[4]);
-		printf("an %d \n",date[0]);
 		  	while(cpt<10)
 		  	{
 		  		c=fgetc(f);
@@ -226,14 +204,13 @@ int main(void)
 		  	
 		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil);
 //pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
-		  	delay(2000);
-		  	while((c=fgetc(f))!='\n');
-		  	nbligneslues++;
-		  
-		  }while(c!=EOF && nbligneslues!=nblignes2);
-  	
-  	  	delay(30000);// relancer le programme de recuperation des evenements chaque 30 secondes
-	  	system("python3 src/quickstart.py");
+		  	delay(2000);		  
+		  }
+		  printf("j \n");
+  	while(1);
+	
+  //	  	delay(70000);// relancer le programme de recuperation des evenements chaque 30 secondes
+	//  	system("python3 src/quickstart.py");
  }
   pthread_join(th, NULL);
   fclose(f);
