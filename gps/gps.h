@@ -58,3 +58,6 @@ void format_position();
  * @brief turn off the gps
  */
 void close_gps();
+
+void calculate_latitude(char latitude_string[50], latitude[50]);
+void calculate_longitude(char longitude_string[50], longitude[50]);
