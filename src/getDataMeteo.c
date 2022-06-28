@@ -1,4 +1,5 @@
-#include "../include/getDataMeteo.h"
+#include "getDataMeteo.h"
+
 
  void init_string(struct string *s) {
     s->len = 0;
@@ -25,10 +26,10 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
     return size*nmemb;
 }
 
-const char* getMeteo()
+void getMeteo(char * temp)
 {
-	struct curl_slist *headers = NULL;
 	CURL *hnd = curl_easy_init();
+	
 	if(hnd)
 	{
 		 struct string s;
@@ -37,8 +38,9 @@ const char* getMeteo()
 		curl_easy_setopt(hnd, CURLOPT_URL, "https://community-open-weather-map.p.rapidapi.com/weather?q=Lens%2Cfr&units=metric&mode=json");
 
 
+		struct curl_slist *headers = NULL;
+		headers = curl_slist_append(headers, "X-RapidAPI-Key: 27de46402cmsh12fd7c7475b6225p18f68cjsn4358d13c3072");
 		headers = curl_slist_append(headers, "X-RapidAPI-Host: community-open-weather-map.p.rapidapi.com");
-		headers = curl_slist_append(headers, "X-RapidAPI-Key: 279894ab9amsh4e06b1d95d7eccfp1d1d69jsn5e40552cda66");
 		curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
 		curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, writefunc);
         	curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &s);
@@ -46,12 +48,14 @@ const char* getMeteo()
         	//printf("%s \n",s.ptr);
 		struct json_object *obj = json_tokener_parse(s.ptr);
 				//printf("%s \n",obj);
-		if (!obj) { fputs("json_tokener_parse failed\n", stderr); return 0; }
+		if (!obj) { fputs("json_tokener_parse failed\n", stderr); return ; }
 
 		struct json_object *routes = json_object_object_get(obj, "main");
-		return strcat(json_object_get_string(json_object_object_get(routes, "temp")),"°C");
+		//printf("%s\n",json_object_get_string(json_object_object_get(routes, "temp")) );
+		strcpy(temp,json_object_get_string(json_object_object_get(routes, "temp")));
+		//return strcat(json_object_get_string(json_object_object_get(routes, "temp")),"°C");
 	}
-	
-	  return 0;
+	sprintf(temp, "%s°C", temp);
+	  
 }
 

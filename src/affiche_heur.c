@@ -42,14 +42,16 @@ static gboolean _label1_update(gpointer data){
 }
 static gboolean _label2_update(gpointer data){
     GtkLabel *label = (GtkLabel*)data;
-    gtk_label_set_label(label, getMeteo());
+    char current_meteo[MAX_METEO];
+    getMeteo(current_meteo);
+    gtk_label_set_label(label,current_meteo);
     return continue_timer;
 
 }
 
 static void _start_timer ( gpointer data,gpointer data2){
     GtkWidget *time_label = data;
- //   GtkWidget *meteo_label = data2;
+    GtkWidget *meteo_label = data2;
     if(!start_timer)
     {
         g_timeout_add_seconds(1, _label1_update, time_label);
@@ -71,13 +73,13 @@ char * get_current_time(){
 }
 static void activate (GtkApplication *app, gpointer        user_data)
 {
-
-
+    char current_meteo[MAX_METEO];
+    getMeteo(current_meteo);
+    
 
   GtkWidget *window = gtk_application_window_new (app);
   GtkWidget *time_label = gtk_label_new(get_current_time());
-  printf("%s",getMeteo());
-  GtkWidget *meteo_label = gtk_label_new(getMeteo());
+  GtkWidget *meteo_label = gtk_label_new(current_meteo);
   GtkWidget * main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 25);
 
   GtkCssProvider *cssProvider = gtk_css_provider_new();
@@ -87,18 +89,18 @@ static void activate (GtkApplication *app, gpointer        user_data)
   gtk_box_set_homogeneous (GTK_BOX (main_box), TRUE);
   gtk_container_add (GTK_CONTAINER (window), main_box);
   gtk_container_add (GTK_CONTAINER (main_box), time_label);
-//  gtk_container_add (GTK_CONTAINER (main_box), meteo_label);
+  gtk_container_add (GTK_CONTAINER (main_box), meteo_label);
 
   g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_window_set_default_size(GTK_WINDOW(window), 1366, 768);
   gtk_widget_show_all (window);
    g_timeout_add_seconds(1, _label1_update, time_label);
-  // g_timeout_add_seconds(10, _label2_update, meteo_label);
+   g_timeout_add_seconds(3600, _label2_update, meteo_label);
     continue_timer = TRUE;
     start_timer = TRUE;
 
     gtk_main();
-    //_start_timer(time_label,meteo_label);
+    _start_timer(time_label,meteo_label);
 
 }
 
