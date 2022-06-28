@@ -8,8 +8,8 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <semaphore.h>
-#include <unistd.h>
 #include <sys/types.h>
+#include "gps.h"
 
 void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
 void declencherBuzzer();
