@@ -1,5 +1,10 @@
 #include "../include/reveil.h"
 
+/* Variable globale semaphore */
+sem_t *monSemaphore;
+
+
+
 
 void *reveilThread(void *arg)
 {
@@ -83,6 +88,7 @@ void *reveilThread(void *arg)
 	}
 }
 
+
 int main(void)
 {
   /*déclaration des vars*/
@@ -91,6 +97,22 @@ int main(void)
   int date[6]={0},nbligneslues=0,cpt=0;
   pthread_t th;
   heureReveil_t *heureReveil;
+
+
+// configuration handelling des signaux
+
+	 struct sigaction newact;
+    sigset_t ancien;
+
+    newact.sa_handler = signalHandeller; // definition de la fonction à appeler
+    sigemptyset(&newact.sa_mask); // mise a 0
+    sigaddset(&newact.sa_mask, SIGALRM);
+    sigprocmask(SIG_BLOCK, &newact.sa_mask, &ancien); // application du mask
+    sigaction(SIGUSR1, &newact, NULL);                 // lancement du deroutage
+
+    //initiation du semaphore
+    monSemaphore=sem_open("/MPSM.SEMAPHORE",O_CREAT | O_RDWR,0600,0); 
+
 
 
   /*lancement du programme python pour récuperer les events*/
@@ -210,13 +232,20 @@ int main(void)
 		  	
 		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil);
 //pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
-		  	delay(2000);		  
-		  }
-  	while(1);
-	
-  //	  	delay(70000);// relancer le programme de recuperation des evenements chaque 30 secondes
-	//  	system("python3 src/quickstart.py");
+		  	delay(2000);
+		  	while((c=fgetc(f2))!='\n');
+		  	nbligneslues++;
+		  
+		  }while(c!=EOF && nbligneslues!=nblignes2);
+  	}
+  	//attente que l'ordre du relancement de la recuperation des données de l'agenda
+	  	sem_wait(monSemaphore);
+
+	  	system("python3 src/quickstart.py");
+
  }
+  sem_close(monSemaphore);
+  sem_unlink("MPSM.SEMAPHORE");
   pthread_join(th, NULL);
   fclose(f);
   return 0;
@@ -250,4 +279,22 @@ void declencherBuzzer()
   }
 }
 // crontab
+
+
+
+
+void signalHandeller(int signal_number)
+{
+    switch (signal_number)
+    {
+    case SIGUSR1:
+        printf("\nSIGNAL RECEIVEDC SEM++\n");
+        //je rend la partie disponible
+        sem_post(monSemaphore);
+        break;
+
+    default:
+        break;
+    }
+}
 
