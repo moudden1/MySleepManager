@@ -206,7 +206,6 @@ int main(void)
 //pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	delay(2000);		  
 		  }
-		  printf("j \n");
   	while(1);
 	
   //	  	delay(70000);// relancer le programme de recuperation des evenements chaque 30 secondes
