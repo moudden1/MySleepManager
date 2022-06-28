@@ -9,6 +9,19 @@
 #include <unistd.h>
 #include "gps.h"
 
+int serial_port;
+char dat;
+int flag = 0;
+char output_setup[100];
+unsigned int i = 0;
+Position localPosition;
+char w_buff[][256] = {"AT+CGNSPWR=1\r\n", 
+					  "AT+CGNSSEQ=\"RMC\"\r\n",
+					  "AT+CGNSINF\r\n", 
+					  "AT+CGNSURC=2\r\n", 
+					  "AT+CGNSTST=1\r\n",
+				      "AT+CGNSPWR=0\r\n"};
+
 int init_gps() {
 
     if ((serial_port = serialOpen(MODEM, BAUDRATE)) < 0) {
