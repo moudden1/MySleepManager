@@ -54,7 +54,7 @@ void close_gps();
  * @param latitude_string : the latitude that we get from the NMEA sentence
  * @param latitude : the string where we store the final latitude
  */
-void calculate_latitude(char latitude_string[50], latitude[50]);
+void calculate_latitude(char latitude_string[50], char latitude[50]);
 
 /**
  * @brief use a math formula to calculate longitude
@@ -62,6 +62,6 @@ void calculate_latitude(char latitude_string[50], latitude[50]);
  * @param longitude_string : the longitude that we get from the NMEA sentence
  * @param longitude : the string where we store the final longitude
  */
-void calculate_longitude(char longitude_string[50], longitude[50]);
+void calculate_longitude(char longitude_string[50], char longitude[50]);
 
 
