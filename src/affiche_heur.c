@@ -83,7 +83,7 @@ static void activate (GtkApplication *app, gpointer        user_data)
   GtkWidget * main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 25);
 
   GtkCssProvider *cssProvider = gtk_css_provider_new();
-  gtk_css_provider_load_from_path(cssProvider, "theme.css", NULL);
+  gtk_css_provider_load_from_path(cssProvider, "src/theme.css", NULL);
   gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),GTK_STYLE_PROVIDER(cssProvider),GTK_STYLE_PROVIDER_PRIORITY_USER);
 
   gtk_box_set_homogeneous (GTK_BOX (main_box), TRUE);
