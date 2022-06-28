@@ -11,6 +11,8 @@ build/alarm_graph.o : src/alarm_graph.c
 	$(c) -I./include -c `pkg-config --cflags gtk+-3.0` src/alarm_graph.c -o build/alarm_graph.o
 build/gps.o: src/gps.c 
 	$(c) -Wall -g -c src/gps.c -o build/gps.o
+build/cronJobs.o: src/cronJobs.c 
+	$(c) -Wall -g -c $^ -o $@
 clean : 
 	rm bin/* build/*
 
