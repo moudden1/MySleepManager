@@ -9,6 +9,19 @@
 #include <unistd.h>
 #include "gps.h"
 
+int serial_port;
+char dat;
+int flag = 0;
+char output_setup[100];
+unsigned int i = 0;
+Position localPosition;
+char w_buff[][256] = {"AT+CGNSPWR=1\r\n", 
+					  "AT+CGNSSEQ=\"RMC\"\r\n",
+					  "AT+CGNSINF\r\n", 
+					  "AT+CGNSURC=2\r\n", 
+					  "AT+CGNSTST=1\r\n",
+				      "AT+CGNSPWR=0\r\n"};
+
 int init_gps() {
 
     if ((serial_port = serialOpen(MODEM, BAUDRATE)) < 0) {
@@ -159,13 +172,11 @@ void get_position(Position *p) {
 			get_lon(lon_string, longitude);
 				  
 			if (strlen(latitude) == 11 && strlen(longitude) == 12) {
-					strcpy(localPosition.latitude, latitude);
-					strcpy(localPosition.longitude, longitude);
+					calculate_latitude(latitude, latitude);
+					calculate_longitude(longitude, longitude);
 
-					format_position();
-
-					strcpy(p->latitude, localPosition.latitude);
-					strcpy(p->longitude, localPosition.longitude);
+					strcpy(p->latitude, latitude);
+					strcpy(p->longitude, longitude);
 				    printf("GGA: %s\r\n",buff);
 
 					break; 
@@ -213,4 +224,55 @@ void format_position() {
 		localPosition.longitude[5] = localPosition.longitude[4];
 		localPosition.longitude[4] = localPosition.longitude[3];
 		localPosition.longitude[3] = dot;
+}
+
+void calculate_latitude(char latitude_string[50], char latitude[50]) {
+	int lat_dd;
+	float lat_mm_mmmm;
+	char lat_dd_s[50];
+	char lat_mm_mmmm_s[50];
+
+	sprintf(lat_dd_s, "%c%c", latitude_string[0], latitude_string[1]);
+	lat_dd = atoi(lat_dd_s);
+
+	sprintf(lat_mm_mmmm_s, 
+			"%c%c%c%c%c%c%c%c%c",
+			latitude_string[2],
+			latitude_string[3],
+			latitude_string[4],
+			latitude_string[5],
+			latitude_string[6],
+			latitude_string[7],
+			latitude_string[8],
+			latitude_string[9],
+			latitude_string[10]);
+	lat_mm_mmmm = atof(lat_mm_mmmm_s);
+
+	sprintf(latitude, "%f", lat_dd + (lat_mm_mmmm / 60));
+}
+
+void calculate_longitude(char longitude_string[50], char longitude[50]) {
+	int lon_ddd;
+	float lon_mm_mmmm;
+	char lon_ddd_s[50];
+	char lon_mm_mmmm_s[50];
+
+	sprintf(lon_ddd_s, "%c%c%c", longitude_string[0], longitude_string[1], longitude_string[2]);
+	lon_ddd = atoi(lon_ddd_s);
+
+	sprintf(lon_mm_mmmm_s, 
+			"%c%c%c%c%c%c%c%c%c",
+			longitude_string[3],
+			longitude_string[4],
+			longitude_string[5],
+			longitude_string[6],
+			longitude_string[7],
+			longitude_string[8],
+			longitude_string[9],
+			longitude_string[10],
+			longitude_string[11]);
+
+	lon_mm_mmmm = atof(lon_mm_mmmm_s);
+
+	sprintf(longitude, "%f", lon_ddd + (lon_mm_mmmm / 60));
 }

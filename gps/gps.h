@@ -7,18 +7,7 @@ typedef struct {
 		char longitude[MAX_POSITION_LEN];
 } Position;
 
-int serial_port;
-char dat;
-int flag = 0;
-char output_setup[100];
-unsigned int i = 0;
-Position localPosition;
-char w_buff[][256] = {"AT+CGNSPWR=1\r\n", 
-					  "AT+CGNSSEQ=\"RMC\"\r\n",
-					  "AT+CGNSINF\r\n", 
-					  "AT+CGNSURC=2\r\n", 
-					  "AT+CGNSTST=1\r\n",
-				      "AT+CGNSPWR=0\r\n"};
+
 
 /**
  * @brief initialize the gps configuration so that we can start receiving data
@@ -58,3 +47,21 @@ void format_position();
  * @brief turn off the gps
  */
 void close_gps();
+
+/**
+ * @brief uses a math formula to calculate latitude 
+ *
+ * @param latitude_string : the latitude that we get from the NMEA sentence
+ * @param latitude : the string where we store the final latitude
+ */
+void calculate_latitude(char latitude_string[50], char latitude[50]);
+
+/**
+ * @brief use a math formula to calculate longitude
+ *
+ * @param longitude_string : the longitude that we get from the NMEA sentence
+ * @param longitude : the string where we store the final longitude
+ */
+void calculate_longitude(char longitude_string[50], char longitude[50]);
+
+
