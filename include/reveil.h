@@ -6,7 +6,7 @@
 #include <wiringPi.h>
 #include <mosquitto.h>
 #include <signal.h>
-
+#include "gps.h"
 void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
 void declencherBuzzer();
 void on_connect(struct mosquitto *mosq, void *obj, int rc) ;

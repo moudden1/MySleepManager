@@ -1,13 +1,4 @@
-#include <wiringSerial.h>
-#include <wiringPi.h>
-#include <string.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include "gps.h"
+#include "../include/gps.h"
 
 int serial_port;
 char dat;

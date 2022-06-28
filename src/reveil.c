@@ -96,7 +96,13 @@ int main(void)
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
   system("python3 src/quickstart.py");
-	
+	Position myPosition;
+	//init_gps();
+		//get_position(&myPosition);
+
+//printf("------------- latitude: %s longitude: %s ----------- \r\n", myPosition.latitude, myPosition.longitude);
+
+//	close_gps();
    while(1)
    {
    	f=fopen("agenda.txt","r"); // fichier contenant les evenements

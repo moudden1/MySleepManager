@@ -1,3 +1,13 @@
+#include <wiringSerial.h>
+#include <wiringPi.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #define MAX_POSITION_LEN 50
 #define MODEM "/dev/ttyUSB0"
 #define BAUDRATE 115200 
