@@ -6,11 +6,16 @@
 #include <wiringPi.h>
 #include <mosquitto.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 void getTimeNow(int *h, int *min, int *s, int *day, int *mois, int *an);
 void declencherBuzzer();
 void on_connect(struct mosquitto *mosq, void *obj, int rc) ;
 void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg);
+void signalHandeller(int signal_number)
 
 typedef struct heureReveil heureReveil_t;
 struct heureReveil

@@ -1,4 +1,9 @@
 #include "../include/reveil.h"
+
+/* Variable globale semaphore */
+sem_t *monSemaphore;
+
+
 void *sub_mqtt(void *arg)
 {
 	int rc, id=1245;
@@ -215,8 +220,8 @@ void *reveilThread(void *arg)
 
 
 
-int main(void)
-{
+int main(void){
+
   /*déclaration des vars*/
   FILE *f,*f2,*f3;
   char c,c2;
@@ -228,6 +233,22 @@ int main(void)
   int firstTime=1;
   int nblignes=0,nblignes2=0,cpt=0;
   int nbligneslues=0,k=0,m=0,quitter=0;
+
+// configuration handelling des signaux
+
+	 struct sigaction newact;
+    sigset_t ancien;
+
+    newact.sa_handler = signalHandeller; // definition de la fonction à appeler
+    sigemptyset(&newact.sa_mask); // mise a 0
+    sigaddset(&newact.sa_mask, SIGALRM);
+    sigprocmask(SIG_BLOCK, &newact.sa_mask, &ancien); // application du mask
+    sigaction(SIGUSR1, &newact, NULL);                 // lancement du deroutage
+
+    //initiation du semaphore
+    monSemaphore=sem_open("/MPSM.SEMAPHORE",O_CREAT | O_RDWR,0600,0); 
+
+
 
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
@@ -435,11 +456,15 @@ printf("a \n");
 		  
 		  }while(c!=EOF && nbligneslues!=nblignes2);
   	}
-  	  	delay(30000);// relancer le programme de recuperation des evenements chaque 30 secondes
+  	//attente que l'ordre du relancement de la recuperation des données de l'agenda
+	  	sem_wait(monSemaphore);
+
 	  	system("python3 src/quickstart.py");
 	  	firstTime=0;
 
  }
+  sem_close(monSemaphore);
+  sem_unlink("MPSM.SEMAPHORE");
   pthread_join(th, NULL);
   pthread_join(th2, NULL);
   fclose(f);
@@ -502,4 +527,20 @@ void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_messag
 	fputc('\n',f);
 	printf("New message with topic %s",(char *) msg->payload);
 	fclose(f);
+}
+
+
+void signalHandeller(int signal_number)
+{
+    switch (signal_number)
+    {
+    case SIGUSR1:
+        printf("\nSIGNAL RECEIVEDC SEM++\n");
+        //je rend la partie disponible
+        sem_post(monSemaphore);
+        break;
+
+    default:
+        break;
+    }
 }
