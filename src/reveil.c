@@ -78,7 +78,7 @@ void *reveilThread(void *arg)
   		break; 
 
   	case 0: 
-  		//declencherBuzzer();
+  		declencherBuzzer();
   		break;
   	default: 
   		start_alarm_app(0, "");
@@ -100,7 +100,7 @@ int main(void)
 
 // configuration handelling des signaux
 
-	 struct sigaction newact;
+	struct sigaction newact;
     sigset_t ancien;
 
     
@@ -112,15 +112,16 @@ int main(void)
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
     system("python3 src/quickstart.py");
 	Position myPosition;
-	//init_gps();
-		//get_position(&myPosition);
+	init_gps();
+	get_position(&myPosition);
 
-//printf("------------- latitude: %s longitude: %s ----------- \r\n", myPosition.latitude, myPosition.longitude);
+	printf("------------- latitude: %s longitude: %s ----------- \r\n", myPosition.latitude, myPosition.longitude);
+		close_gps();
 	newact.sa_handler = signalHandeller; // definition de la fonction à appeler
     sigemptyset(&newact.sa_mask); // mise a 0
     sigaddset(&newact.sa_mask, SIGALRM);
     sigprocmask(SIG_BLOCK, &newact.sa_mask, &ancien); // application du mask
-//	close_gps();
+
     sigaction(SIGUSR1, &newact, NULL);                 // lancement du deroutage
 
 	    monSemaphore=sem_open("/MPSM.SEMAPHORE",O_CREAT | O_RDWR,0600,0); 

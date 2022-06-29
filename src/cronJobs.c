@@ -7,7 +7,7 @@
 void addCronJob(char script_hard_path[255], int pid) {
 	char linux_command[255];
 
-	sprintf(linux_command, "echo \"21 22 * * * %s %d\" | crontab -", script_hard_path, pid);
+	sprintf(linux_command, "echo \"53 22 * * * %s %d\" | crontab -", script_hard_path, pid);
 
 	system(linux_command);
 }
