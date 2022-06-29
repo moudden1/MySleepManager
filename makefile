@@ -1,7 +1,7 @@
 c=gcc
 
-all : build/getDataGoogleMaps2.o src/reveil.c build/getDataMeteo.o src/affiche_heur.c build/alarm_graph.o build/gps.o
-	$(c) `pkg-config --cflags gtk+-3.0` -I./include -o bin/reveil build/getDataGoogleMaps2.o build/alarm_graph.o src/reveil.c -lpthread -lcurl -ljson-c -lwiringPi -lmosquitto build/gps.o `pkg-config --libs gtk+-3.0`
+all : build/getDataGoogleMaps2.o src/reveil.c build/getDataMeteo.o src/affiche_heur.c build/alarm_graph.o build/gps.o build/cronJobs.o
+	$(c) `pkg-config --cflags gtk+-3.0` -I./include -o bin/reveil build/getDataGoogleMaps2.o build/alarm_graph.o build/cronJobs.o src/reveil.c -lpthread -lcurl -ljson-c -lwiringPi -lmosquitto build/gps.o `pkg-config --libs gtk+-3.0`
 	$(c)  `pkg-config --cflags gtk+-3.0` -o bin/heure build/getDataMeteo.o src/affiche_heur.c -lcurl -ljson-c -lwiringPi `pkg-config --libs gtk+-3.0`
 build/getDataGoogleMaps2.o : src/getDataGoogleMaps2.c 
 	$(c) -I./include -c src/getDataGoogleMaps2.c -o build/getDataGoogleMaps2.o

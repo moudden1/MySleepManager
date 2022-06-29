@@ -4,10 +4,9 @@
 sem_t *monSemaphore;
 
 
-
-
 void *reveilThread(void *arg)
 {
+	
   int h, min, s, day, mois, an;
   int duree_trajet_thread;
   heureReveil_t *heureReveil =(heureReveil_t *)arg;
@@ -97,36 +96,40 @@ int main(void)
   int date[6]={0},nbligneslues=0,cpt=0;
   pthread_t th;
   heureReveil_t *heureReveil;
-
+  int pid = getpid();
 
 // configuration handelling des signaux
 
 	 struct sigaction newact;
     sigset_t ancien;
 
-    newact.sa_handler = signalHandeller; // definition de la fonction à appeler
-    sigemptyset(&newact.sa_mask); // mise a 0
-    sigaddset(&newact.sa_mask, SIGALRM);
-    sigprocmask(SIG_BLOCK, &newact.sa_mask, &ancien); // application du mask
-    sigaction(SIGUSR1, &newact, NULL);                 // lancement du deroutage
-
+    
     //initiation du semaphore
-    monSemaphore=sem_open("/MPSM.SEMAPHORE",O_CREAT | O_RDWR,0600,0); 
 
 
 
   /*lancement du programme python pour récuperer les events*/
 	/*faire qlq chose qui necessite connex et tant que ca marche pas reste bloqué*/
-  system("python3 src/quickstart.py");
+    system("python3 src/quickstart.py");
 	Position myPosition;
 	//init_gps();
 		//get_position(&myPosition);
 
 //printf("------------- latitude: %s longitude: %s ----------- \r\n", myPosition.latitude, myPosition.longitude);
-
+	newact.sa_handler = signalHandeller; // definition de la fonction à appeler
+    sigemptyset(&newact.sa_mask); // mise a 0
+    sigaddset(&newact.sa_mask, SIGALRM);
+    sigprocmask(SIG_BLOCK, &newact.sa_mask, &ancien); // application du mask
 //	close_gps();
+    sigaction(SIGUSR1, &newact, NULL);                 // lancement du deroutage
+
+	    monSemaphore=sem_open("/MPSM.SEMAPHORE",O_CREAT | O_RDWR,0600,0); 
+
    while(1)
    {
+    sigaction(SIGUSR1, &newact, NULL);                 // lancement du deroutage
+
+
    	f=fopen("agenda.txt","r"); // fichier contenant les evenements
 	if( c=fgetc(f) != EOF) // verifier qu'il contient une ligne
 	{
@@ -233,16 +236,11 @@ int main(void)
 		  	pthread_create(&th, NULL, reveilThread, (void *)heureReveil);
 //pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	delay(2000);
-		  	while((c=fgetc(f2))!='\n');
-		  	nbligneslues++;
-		  
-		  }while(c!=EOF && nbligneslues!=nblignes2);
   	}
-  	//attente que l'ordre du relancement de la recuperation des données de l'agenda
-	  	sem_wait(monSemaphore);
-
-	  	system("python3 src/quickstart.py");
-
+			addCronJob("/home/moudden/Bureau/LA1/MySleepManager/MySleepManager/src/script.sh", pid);	
+  			//attente que l'ordre du relancement de la recuperation des données de l'agenda
+	  		printf("En attente de la prochaine récupération des évenements \n");
+			sem_wait(monSemaphore);
  }
   sem_close(monSemaphore);
   sem_unlink("MPSM.SEMAPHORE");
@@ -288,9 +286,12 @@ void signalHandeller(int signal_number)
     switch (signal_number)
     {
     case SIGUSR1:
-        printf("\nSIGNAL RECEIVEDC SEM++\n");
+		printf("siganl recu \n");
+		
         //je rend la partie disponible
         sem_post(monSemaphore);
+		system("python3 src/quickstart.py");
+		sleep(2);
         break;
 
     default:
