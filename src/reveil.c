@@ -239,7 +239,6 @@ int main(void)
   	}
 			addCronJob("/home/moudden/Bureau/LA1/MySleepManager/MySleepManager/src/script.sh", pid);	
   			//attente que l'ordre du relancement de la recuperation des données de l'agenda
-	  		printf("En attente de la prochaine récupération des évenements \n");
 			sem_wait(monSemaphore);
  }
   sem_close(monSemaphore);
