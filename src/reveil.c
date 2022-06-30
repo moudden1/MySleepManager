@@ -238,7 +238,7 @@ int main(void)
 //pthread_create(&th, NULL, reveilThread2, (void *)heureReveil[nbligneslues]);
 		  	delay(2000);
   	}
-			addCronJob("/home/moudden/Bureau/LA1/MySleepManager/MySleepManager/src/script.sh", pid);	
+			addCronJob("/home/pi/MySleepManager/src/script.sh", pid);	
   			//attente que l'ordre du relancement de la recuperation des données de l'agenda
 			sem_wait(monSemaphore);
  }
